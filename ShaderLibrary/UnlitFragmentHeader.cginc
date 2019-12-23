@@ -1,0 +1,1 @@
+Output o = (Output)0;

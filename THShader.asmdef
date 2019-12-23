@@ -1,0 +1,17 @@
+{
+    "name": "THShader",
+    "references": [
+        "GUID:0c874907cbc9fba47a9a732913a599ec"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
