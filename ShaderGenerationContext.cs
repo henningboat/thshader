@@ -41,6 +41,11 @@ namespace THUtils.THShader
 			return _stringBuilder.ToString();
 		}
 
+		public void Log(string log)
+		{
+			WriteLine($"//{log}");
+		}
+
 		public void WriteLine(string text)
 		{
 			if (text == null)

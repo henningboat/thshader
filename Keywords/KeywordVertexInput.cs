@@ -28,7 +28,7 @@ namespace THUtils.THShader.Keywords
 				AddFragmentShaderRequiredAttributes(context);
 			}
 
-			if (_attributes.Any(pair => pair.Value.AttributeType == AttributeType.Anonymous))
+			if (_attributes.Any(pair => pair.AttributeType == AttributeType.Anonymous))
 			{
 				throw new KeywordMap.ShaderGenerationException("Can't Vertex Attribute needs an explicit AttributeType");
 			}
@@ -38,7 +38,7 @@ namespace THUtils.THShader.Keywords
 
 		public bool HasPositionAttribute()
 		{
-			return _attributes.ContainsKey(AttributeType.Position);
+			return _attributes.Any(config => config.AttributeType == AttributeType.Position);
 		}
 
 		#endregion
@@ -70,10 +70,10 @@ namespace THUtils.THShader.Keywords
 					continue;
 				}
 
-				if (!_attributes.ContainsKey(fragmentAttribute.AttributeType))
-				{
-					_attributes[fragmentAttribute.AttributeType] = fragmentAttribute;
-				}
+				//if (!_attributes.ContainsKey(fragmentAttribute.AttributeType))
+				//{
+				//	_attributes[fragmentAttribute.AttributeType] = fragmentAttribute;
+				//}
 			}
 		}
 
