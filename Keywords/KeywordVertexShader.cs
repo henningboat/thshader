@@ -19,10 +19,12 @@ namespace THUtils.THShader.Keywords
 		{
 			context.WriteLine("#define UNITY_SHADER_NO_UPGRADE 1");
 			context.WriteLine("v2f vert(appdata v){");
-			context.WriteLineIndented("	v2f o = (v2f)0;");
+			context.WriteLineIndented("	Varyings output = (Varyings)0;");
 
 			var vertexInput = context.KeywordMap.GetKeyword<KeywordVertexInput>();
 			var fragmentInput = context.KeywordMap.GetKeyword<KeywordFragmentInput>();
+			
+
 			if (vertexInput.HasPositionAttribute())
 			{
 				string vertexPositionName = vertexInput.GetAttribute(AttributeType.Position).Name;

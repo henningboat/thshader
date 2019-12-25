@@ -70,11 +70,12 @@ Shader ""Hidden/THShaderErrorShader2""
 
 		internal ShaderGenerator(List<string> source)
 		{
+			ShaderGenerationContext context=null;
 			try
 			{
 				RemoveComments(source);
 
-				var context = new ShaderGenerationContext(source, new StringBuilder());
+				context = new ShaderGenerationContext(source, new StringBuilder());
 
 				GenerateOuter(context, (s) =>
 				                       {
@@ -88,7 +89,12 @@ Shader ""Hidden/THShaderErrorShader2""
 			catch (Exception e)
 			{
 				Debug.LogError(e);
-				GeneratedShader = DefaultErrorShader;
+				if (context != null)
+				{
+					GeneratedShader += context.BuildString();
+				}
+				GeneratedShader += "\n";
+				GeneratedShader += e;
 				Debug.LogError("Failed to import thshader");
 			}
 		}

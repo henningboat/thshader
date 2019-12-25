@@ -15,8 +15,7 @@ namespace THUtils.THShader.Keywords
 
 		#region Private Fields
 
-		private List<AttributeMapping> _attributeAliasMaps = new List<AttributeMapping>();
-		private List<AttributeMapping> _explicitAttributeMappings = new List<AttributeMapping>();
+		private List<AttributeMapping> _attributeMappings = new List<AttributeMapping>();
 
 		#endregion
 
@@ -25,6 +24,7 @@ namespace THUtils.THShader.Keywords
 		public override string DefaultLineArguments => null;
 		public override bool MultiLine => true;
 		protected abstract string StructName { get; }
+		private string UserStructName => $"User{StructName}";
 
 		#endregion
 
@@ -48,6 +48,8 @@ namespace THUtils.THShader.Keywords
 			AddPassRequiredAttributes(GetRequiredPassAttributes(context));
 			AddPassKeywords(GetRequiredPassKeywords(context));
 
+			BuildAttributeMap();
+
 			context.WriteLine($"struct {StructName}");
 			context.WriteLine("{");
 
@@ -58,39 +60,27 @@ namespace THUtils.THShader.Keywords
 				context.WriteLine(keyword);
 			}
 
+			context.Newine();
+
 			context.WriteLine("};");
+
+			context.WriteLine($"struct {UserStructName}");
+			context.WriteLine("{");
+
+			context.WriteIndented(WriteUserDefinedAttributes);
+
+			context.WriteLine("};");
+
+			context.Newine();
+			context.WriteLine($"{UserStructName} Init{UserStructName}({StructName} input)");
+			context.WriteLine("{");
+			context.WriteIndented(SetupUserStructCode);
+			context.WriteLine("}");
 		}
 
 		#endregion
 
 		#region Protected methods
-
-		private void WriteAttributeComponents(ShaderGenerationContext context)
-		{
-			for (int i = 0; i < _attributeAliasMaps.Count; i++)
-			{
-				AttributeMapping mapping = _attributeAliasMaps[i];
-
-				string log = "Content:";
-
-				for (int j = 0; j < mapping.Entries.Count; j++)
-				{
-					AttributeAliasMapEntry entry = mapping.Entries[j];
-					log += $" {entry.Name}[{entry.Component}],";
-				}
-
-				context.Log(log);
-
-				if (mapping.Dimensions == 1)
-				{
-					context.WriteLine($"{mapping.DataType} PackedData{i} : Color{i + 10}");
-				}
-				else
-				{
-					context.WriteLine($"{mapping.DataType}{mapping.Dimensions} PackedData{i} : Color{i + 10}");
-				}
-			}
-		}
 
 		protected override void HandleMultiLineKeyword(Queue<string> lines)
 		{
@@ -128,8 +118,6 @@ namespace THUtils.THShader.Keywords
 
 				_attributes.Add(new AttributeConfig(attribute, dataType, dimension, name, true));
 			}
-
-			RebuildAttributeAliasMap();
 		}
 
 		protected abstract List<string> GetRequiredPassKeywords(ShaderGenerationContext context);
@@ -138,6 +126,108 @@ namespace THUtils.THShader.Keywords
 		#endregion
 
 		#region Private methods
+
+		private void SetupUserStructCode(ShaderGenerationContext context)
+		{
+			List<AttributeAliasMapEntry> allEntries = new List<AttributeAliasMapEntry>();
+			foreach (AttributeMapping mapping in _attributeMappings)
+			{
+				allEntries.AddRange(mapping.Entries);
+			}
+
+			context.WriteLine($"{UserStructName} output;");
+			foreach (AttributeConfig attribute in _attributes)
+			{
+				if (!attribute.UserDefined)
+				{
+					continue;
+				}
+
+				for (int i = 0; i < attribute.Dimensions; i++)
+				{
+					AttributeAliasMapEntry mappingEntry;
+					if (attribute.AttributeType == AttributeType.Anonymous)
+					{
+						mappingEntry = allEntries.First(entry => entry.Name == attribute.Name && entry.Component == i);
+					}
+					else
+					{
+						mappingEntry = allEntries.First(entry => entry.AttributeType == attribute.AttributeType && entry.Component == i);
+					}
+
+					context.WriteLine($"output.{attribute.Name}[{i}] = input.{mappingEntry.AttributeName}[{mappingEntry.IndexInAttribute}];");
+				}
+			}
+
+			context.WriteLine("return output;");
+		}
+
+		private void WriteUserDefinedAttributes(ShaderGenerationContext context)
+		{
+			foreach (AttributeConfig attribute in _attributes)
+			{
+				if (attribute.UserDefined)
+				{
+					context.WriteLine($"{attribute.DataTypeAndDimensionsString} {attribute.Name};");
+				}
+			}
+		}
+
+		private void WriteAttributeComponents(ShaderGenerationContext context)
+		{
+			for (int i = 0; i < _attributeMappings.Count; i++)
+			{
+				AttributeMapping mapping = _attributeMappings[i];
+
+				if (mapping.AttributeType == AttributeType.Anonymous)
+				{
+					string log = "Content:";
+
+					for (int j = 0; j < mapping.Entries.Count; j++)
+					{
+						AttributeAliasMapEntry entry = mapping.Entries[j];
+						log += $" {entry.Name}[{entry.Component}],";
+					}
+
+					context.Log(log);
+				}
+
+				string dataTypeString;
+				string attributeTypeString;
+				string nameString = mapping.Name;
+
+				if (mapping.Dimensions == 1)
+				{
+					dataTypeString = $"{mapping.DataType}";
+				}
+				else
+				{
+					dataTypeString = $"{mapping.DataType}{mapping.Dimensions}";
+				}
+
+				if (mapping.AttributeType == AttributeType.Anonymous)
+				{
+					attributeTypeString = $"Color{i + 10}";
+				}
+				else
+				{
+					attributeTypeString = GetAttributeTypeString(mapping.AttributeType);
+				}
+
+				context.WriteLine($"{dataTypeString} {nameString} : {attributeTypeString};");
+			}
+		}
+
+		private string GetAttributeTypeString(AttributeType attributeType)
+		{
+			string attributeName = attributeType.ToString();
+			if (attributeType == AttributeType.Position && this is KeywordVertexInput)
+			{
+				attributeName = "SV_Position";
+			}
+
+			return attributeName;
+		}
 
 		private void ParseDataTypeAndDimension(string input, out DataType dataType, out uint dimensions)
 		{
@@ -168,55 +258,68 @@ namespace THUtils.THShader.Keywords
 
 		private void AddPassRequiredAttributes(List<AttributeConfig> requiredAttributes)
 		{
-			//todo
-			//foreach (AttributeConfig requiredAttribute in requiredAttributes)
-			//{
-			//	bool needsToBeAdded = false;
-			//	//todo
-			//	if (!_attributes.ContainsKey(requiredAttribute.AttributeType))
-			//	{
-			//		needsToBeAdded = true;
-			//	}
-			//	else
-			//	{
-			//		var existingAttribute = _attributes[requiredAttribute.AttributeType];
-			//		if (existingAttribute.DataType != requiredAttribute.DataType)
-			//		{
-			//			throw new KeywordMap.ShaderGenerationException($"Attribute {existingAttribute.Name} of typ {existingAttribute.AttributeType} has to be defined with data type {requiredAttribute.DataType}");
-			//		}
-
-			//		if (existingAttribute.Name != requiredAttribute.Name)
-			//		{
-			//			needsToBeAdded = true;
-			//		}
-			//	}
-
-			//	if (needsToBeAdded)
-			//	{
-			//		_attributes.Add(requiredAttribute.AttributeType, requiredAttribute);
-			//	}
-			//}
-		}
-
-		private void RebuildAttributeAliasMap()
-		{
-			_attributeAliasMaps = new List<AttributeMapping>();
-			foreach (AttributeConfig attributeConfig in _attributes)
+			foreach (AttributeConfig requiredAttribute in requiredAttributes)
 			{
-				for (int i = 0; i < attributeConfig.Dimensions; i++)
+				bool needsToBeAdded = false;
+				if (requiredAttribute.AttributeType == AttributeType.Anonymous)
 				{
-					GetOrCreateAttributeMap(attributeConfig.DataType).AddEntry(new AttributeAliasMapEntry(attributeConfig.Name, i));
+					needsToBeAdded = true;
+				}
+				else
+				{
+					if (!_attributes.Any(config => config.AttributeType == requiredAttribute.AttributeType))
+					{
+						needsToBeAdded = true;
+					}
+					else
+					{
+						AttributeConfig existingAttribute = _attributes.First(config => config.AttributeType == requiredAttribute.AttributeType);
+						if (existingAttribute.DataType == requiredAttribute.DataType && existingAttribute.Dimensions == requiredAttribute.Dimensions)
+						{
+							if (existingAttribute.Name != requiredAttribute.Name)
+							{
+								needsToBeAdded = true;
+							}
+						}
+						else
+						{
+							throw new KeywordMap.ShaderGenerationException($"Attribute {existingAttribute.Name} of type {existingAttribute.AttributeType} needs to be a {requiredAttribute.DataType} ({requiredAttribute.Dimensions}) in this shader model");
+						}
+					}
+				}
+
+				if (needsToBeAdded)
+				{
+					_attributes.Add(requiredAttribute);
 				}
 			}
 		}
 
-		private AttributeMapping GetOrCreateAttributeMap(DataType dataType)
+		private void BuildAttributeMap()
 		{
-			AttributeMapping mapping = _attributeAliasMaps.LastOrDefault(attributeMapping => attributeMapping.DataType == dataType);
+			_attributeMappings = new List<AttributeMapping>();
+			foreach (AttributeConfig attributeConfig in _attributes)
+			{
+				for (int i = 0; i < attributeConfig.Dimensions; i++)
+				{
+					GetOrCreateAttributeMap(attributeConfig.DataType, attributeConfig.AttributeType).AddEntry(new AttributeAliasMapEntry(attributeConfig.Name, i, attributeConfig.AttributeType, attributeConfig.DataType));
+				}
+			}
+		}
+
+		private AttributeMapping GetOrCreateAttributeMap(DataType dataType, AttributeType attributeType)
+		{
+			AttributeMapping mapping = _attributeMappings.LastOrDefault(attributeMapping => attributeMapping.DataType == dataType && attributeMapping.AttributeType == attributeType);
+
 			if (mapping == null || mapping.IsFull)
 			{
-				mapping = new AttributeMapping(dataType);
-				_attributeAliasMaps.Add(mapping);
+				if (mapping != null && attributeType != AttributeType.Anonymous)
+				{
+					_attributeMappings.Remove(mapping);
+				}
+
+				mapping = new AttributeMapping(dataType, attributeType, _attributeMappings.Count + 1);
+				_attributeMappings.Add(mapping);
 			}
 
 			return mapping;
@@ -235,17 +338,42 @@ namespace THUtils.THShader.Keywords
 		{
 			#region Public Fields
 
+			public readonly AttributeType AttributeType;
 			public readonly int Component;
+			public readonly DataType DataType;
 			public readonly string Name;
+
+			#endregion
+
+			#region Properties
+
+			public string AttributeName { get; private set; }
+			public int IndexInAttribute { get; set; }
 
 			#endregion
 
 			#region Constructors
 
-			public AttributeAliasMapEntry(string name, int component)
+			public AttributeAliasMapEntry(string name, int component, AttributeType attributeType, DataType dataType)
 			{
 				Component = component;
+				AttributeType = attributeType;
+				DataType = dataType;
 				Name = name;
+			}
+
+			#endregion
+
+			#region Public methods
+
+			public void SetAttributeName(string name)
+			{
+				AttributeName = name;
+			}
+
+			public void SetIndexInAttribute(int index)
+			{
+				IndexInAttribute = index;
 			}
 
 			#endregion
@@ -259,8 +387,10 @@ namespace THUtils.THShader.Keywords
 		{
 			#region Public Fields
 
+			public readonly AttributeType AttributeType;
 			public readonly DataType DataType;
 			public readonly List<AttributeAliasMapEntry> Entries;
+			public readonly string Name;
 
 			#endregion
 
@@ -273,10 +403,19 @@ namespace THUtils.THShader.Keywords
 
 			#region Constructors
 
-			public AttributeMapping(DataType dataType)
+			public AttributeMapping(DataType dataType, AttributeType attributeType, int index)
 			{
 				DataType = dataType;
+				AttributeType = attributeType;
 				Entries = new List<AttributeAliasMapEntry>(4);
+				if (attributeType == AttributeType.Anonymous)
+				{
+					Name = $"PackedData{index}";
+				}
+				else
+				{
+					Name = $"{attributeType.ToString()}Data";
+				}
 			}
 
 			#endregion
@@ -289,6 +428,9 @@ namespace THUtils.THShader.Keywords
 				{
 					throw new ArgumentOutOfRangeException();
 				}
+
+				entry.SetAttributeName(Name);
+				entry.SetIndexInAttribute(Entries.Count);
 
 				Entries.Add(entry);
 			}

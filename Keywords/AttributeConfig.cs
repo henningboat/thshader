@@ -1,5 +1,3 @@
-using System;
-
 namespace THUtils.THShader.Keywords
 {
 	public struct AttributeConfig
@@ -19,7 +17,21 @@ namespace THUtils.THShader.Keywords
 		#endregion
 
 		#region Properties
-		
+
+		public string DataTypeAndDimensionsString
+		{
+			get
+			{
+				if (Dimensions == 1)
+				{
+					return DataType.ToString();
+				}
+				else
+				{
+					return $"{DataType}{Dimensions}";
+				}
+			}
+		}
 
 		#endregion
 
@@ -38,21 +50,6 @@ namespace THUtils.THShader.Keywords
 			}
 
 			Dimensions = dimensions;
-		}
-
-		#endregion
-
-		#region Public methods
-
-		public void Write(ShaderGenerationContext context, bool forVertexShader)
-		{
-			string attributeName = AttributeType.ToString();
-			if (AttributeType == AttributeType.Position && !forVertexShader)
-			{
-				attributeName = "SV_Position";
-			}
-
-			context.WriteLineIndented($"{DataType} {Name} : {attributeName};");
 		}
 
 		#endregion

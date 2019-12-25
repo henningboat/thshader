@@ -63,6 +63,14 @@ namespace THUtils.THShader
 			}
 		}
 
+		public void Write(string text)
+		{
+			if (text == null)
+				return;
+
+            _stringBuilder.Append(text);
+		}
+
 		public void WriteIndented(Action<ShaderGenerationContext> action)
 		{
 			Indent();
