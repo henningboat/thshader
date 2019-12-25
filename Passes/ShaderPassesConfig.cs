@@ -22,9 +22,9 @@ namespace THUtils.THShader.Passes
 
 		#region Public methods
 
-		public abstract List<ShaderPass> GeneratePasses(ShaderBuildContext context);
+		public abstract List<ShaderPass> GeneratePasses(ShaderGenerationContext context);
 
-		public void Write(ShaderBuildContext context)
+		public void Write(ShaderGenerationContext context)
 		{
 			//todo workaround for now
 			context.KeywordMap.GetKeyword<KeywordHasNormalMap>().Write(context);

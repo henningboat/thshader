@@ -13,6 +13,6 @@ namespace THUtils.THShader
 
 		#endregion
 
-		internal abstract void Write(ShaderBuildContext context);
+		internal abstract void Write(ShaderGenerationContext context);
 	}
 }

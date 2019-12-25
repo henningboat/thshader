@@ -1,3 +1,5 @@
+using System;
+
 namespace THUtils.THShader.Keywords
 {
 	public struct AttributeConfig
@@ -16,6 +18,46 @@ namespace THUtils.THShader.Keywords
 
 		#endregion
 
+		#region Properties
+
+		public int Dimensions
+		{
+			get
+			{
+				switch (DataType)
+				{
+					case DataType.@float:
+					case DataType.@uint:
+					case DataType.@int:
+					case DataType.half:
+						return 1;
+
+					case DataType.float2:
+					case DataType.uint2:
+					case DataType.int2:
+					case DataType.half2:
+						return 2;
+
+					case DataType.float3:
+					case DataType.uint3:
+					case DataType.int3:
+					case DataType.half3:
+						return 3;
+
+					case DataType.float4:
+					case DataType.uint4:
+					case DataType.int4:
+					case DataType.half4:
+						return 4;
+
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
+			}
+		}
+
+		#endregion
+
 		#region Constructors
 
 		public AttributeConfig(AttributeType attributeType, DataType dataType, string name, bool userDefined = false)
@@ -30,7 +72,7 @@ namespace THUtils.THShader.Keywords
 
 		#region Public methods
 
-		public void Write(ShaderBuildContext context, bool forVertexShader)
+		public void Write(ShaderGenerationContext context, bool forVertexShader)
 		{
 			string attributeName = AttributeType.ToString();
 			if (AttributeType == AttributeType.Position && !forVertexShader)

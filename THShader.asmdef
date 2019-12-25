@@ -1,8 +1,6 @@
 {
     "name": "THShader",
-    "references": [
-        "GUID:0c874907cbc9fba47a9a732913a599ec"
-    ],
+    "references": [],
     "includePlatforms": [
         "Editor"
     ],

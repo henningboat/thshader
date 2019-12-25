@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace THUtils.THShader.Keywords
 {
-	internal class KeywordShaderCode : SingletonKeyword
+	public class KeywordCodeBlock : MultiKeyword
 	{
-		#region Protected Fields
+		#region Private Fields
 
 		private string _parsedCode;
 
@@ -20,7 +20,7 @@ namespace THUtils.THShader.Keywords
 
 		#region Constructors
 
-		public KeywordShaderCode(Queue<string> sourceCode) : base(sourceCode)
+		public KeywordCodeBlock(Queue<string> sourceCode) : base(sourceCode)
 		{
 		}
 
@@ -28,7 +28,7 @@ namespace THUtils.THShader.Keywords
 
 		#region Public methods
 
-		public override void HandleMultiLineKeyword(Queue<string> lines)
+		protected override void HandleMultiLineKeyword(Queue<string> lines)
 		{
 			while (lines.Count > 0)
 			{
@@ -45,7 +45,7 @@ namespace THUtils.THShader.Keywords
 			}
 		}
 
-		public virtual void Write(ShaderBuildContext context)
+		public virtual void Write(ShaderGenerationContext context)
 		{
 			context.WriteLine(_parsedCode);
 		}

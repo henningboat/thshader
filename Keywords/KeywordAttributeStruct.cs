@@ -36,7 +36,7 @@ namespace THUtils.THShader.Keywords
 			return _attributes[type];
 		}
 
-		public virtual void Write(ShaderBuildContext context)
+		public virtual void Write(ShaderGenerationContext context)
 		{
 			AddPassRequiredAttributes(GetRequiredPassAttributes(context));
 			AddPassKeywords(GetRequiredPassKeywords(context));
@@ -44,10 +44,7 @@ namespace THUtils.THShader.Keywords
 			context.WriteLine($"struct {StructName}");
 			context.WriteLine("{");
 
-			foreach (var attribute in _attributes.Values)
-			{
-				attribute.Write(context, this is KeywordVertexInput);
-			}
+			WriteAttributeComponents(context);
 
 			foreach (string keyword in _keywords)
 			{
@@ -57,20 +54,37 @@ namespace THUtils.THShader.Keywords
 			context.WriteLine("};");
 		}
 
-		public override void HandleMultiLineKeyword(Queue<string> lines)
+		protected virtual void WriteAttributeComponents(ShaderGenerationContext context)
+		{
+			foreach (var attribute in _attributes.Values)
+			{
+				attribute.Write(context, this is KeywordVertexInput);
+			}
+		}
+
+		protected override void HandleMultiLineKeyword(Queue<string> lines)
 		{
 			while (lines.Count > 0 && lines.Peek() != "")
 			{
 				string line = lines.Dequeue();
 				var parts = line.Split(' ');
-				if (parts.Length != 3)
+
+				AttributeType attribute;
+
+				if (parts.Length == 3)
+				{
+					if (!Enum.TryParse(parts[2], true, out attribute))
+					{
+						throw new Exception($"Failed to parse Vertex Attribute in following line: \"{line}\"");
+					}
+				}
+				else if (parts.Length == 2)
+				{
+					attribute = AttributeType.Anonymous;
+				}
+				else
 				{
 					throw new Exception($"Parsing Error in line: \"{line}\"");
-				}
-
-				if (!Enum.TryParse(parts[2], true, out AttributeType attribute))
-				{
-					throw new Exception($"Failed to parse Vertex Attribute in following line: \"{line}\"");
 				}
 
 				if (!Enum.TryParse(parts[0], true, out DataType dataType))
@@ -93,8 +107,8 @@ namespace THUtils.THShader.Keywords
 
 		#region Protected methods
 
-		protected abstract List<string> GetRequiredPassKeywords(ShaderBuildContext context);
-		protected abstract List<AttributeConfig> GetRequiredPassAttributes(ShaderBuildContext context);
+		protected abstract List<string> GetRequiredPassKeywords(ShaderGenerationContext context);
+		protected abstract List<AttributeConfig> GetRequiredPassAttributes(ShaderGenerationContext context);
 
 		#endregion
 

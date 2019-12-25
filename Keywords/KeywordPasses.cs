@@ -41,7 +41,7 @@ namespace THUtils.THShader.Keywords
 
 		#endregion
 
-		internal void GeneratePasses(ShaderBuildContext context)
+		internal void GeneratePasses(ShaderGenerationContext context)
 		{
 			context.WriteLine("SubShader{");
 

@@ -6,7 +6,7 @@ namespace THUtils.THShader
 	{
 		#region Public methods
 
-		public void Generate(ShaderBuildContext context)
+		public void Generate(ShaderGenerationContext context)
 		{
 			List<PipelineStateKeyword> keywords = context.KeywordMap.GetKeywords<PipelineStateKeyword>();
 

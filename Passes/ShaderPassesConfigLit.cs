@@ -19,7 +19,7 @@ namespace THUtils.THShader.Passes
 
 		#region Public methods
 
-		public override List<ShaderPass> GeneratePasses(ShaderBuildContext context)
+		public override List<ShaderPass> GeneratePasses(ShaderGenerationContext context)
 		{
 			return new List<ShaderPass>()
 			       {

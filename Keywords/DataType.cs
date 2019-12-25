@@ -14,5 +14,9 @@ namespace THUtils.THShader.Keywords
 		@int2,
 		@int3,
 		@int4,
+		half,
+		half2,
+		half3,
+		half4
 	}
 }

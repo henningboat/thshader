@@ -18,7 +18,7 @@ namespace THUtils.THShader.Keywords
 
 		#endregion
 
-		internal override void Write(ShaderBuildContext context)
+		internal override void Write(ShaderGenerationContext context)
 		{
 			context.WriteLine($"{Name} True");
 		}

@@ -15,7 +15,7 @@ namespace THUtils.THShader.Keywords
 
 		#region Public methods
 
-		public override void Write(ShaderBuildContext context)
+		public override void Write(ShaderGenerationContext context)
 		{
 			context.WriteLine("#define UNITY_SHADER_NO_UPGRADE 1");
 			context.WriteLine("v2f vert(appdata v){");
@@ -50,7 +50,7 @@ namespace THUtils.THShader.Keywords
 
 		#region Private methods
 
-		private void WriteDefaultCode(ShaderBuildContext context)
+		private void WriteDefaultCode(ShaderGenerationContext context)
 		{
 			var vertexInput = context.KeywordMap.GetKeyword<KeywordVertexInput>();
 			var fragmentInput = context.KeywordMap.GetKeyword<KeywordFragmentInput>();

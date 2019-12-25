@@ -20,7 +20,7 @@ namespace THUtils.THShader.Keywords
 
 		#region Public methods
 
-		public void Write(ShaderBuildContext context)
+		public void Write(ShaderGenerationContext context)
 		{
 			if (!IsDefault)
 			{

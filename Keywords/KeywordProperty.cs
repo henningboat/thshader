@@ -21,7 +21,7 @@ namespace THUtils.THShader.Keywords
 
 		#region Public methods
 
-		public void Write(ShaderBuildContext context, bool propertyDefinition)
+		public void Write(ShaderGenerationContext context, bool propertyDefinition)
 		{
 			if (IsDefault)
 				return;

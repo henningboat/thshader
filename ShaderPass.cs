@@ -19,7 +19,7 @@ namespace THUtils.THShader
 				return "";
 			}
 
-			string combine = Path.Combine(Application.dataPath, "THUtils/THShader", path);
+			string combine = Path.GetFullPath(Path.Combine("Packages/com.henningboat.thshader", path));
 			try
 			{
 				return File.ReadAllText(combine);
@@ -80,7 +80,7 @@ namespace THUtils.THShader
 
 		#region Private methods
 
-		private void WriteInnerPass(ShaderBuildContext context)
+		private void WriteInnerPass(ShaderGenerationContext context)
 		{
 			var pipelineState = new PipelineState();
 			pipelineState.Generate(context);
@@ -104,7 +104,7 @@ namespace THUtils.THShader
 			context.WriteLine("ENDHLSL");
 		}
 
-		private bool ShouldWriteUsePassInstead(ShaderBuildContext context)
+		private bool ShouldWriteUsePassInstead(ShaderGenerationContext context)
 		{
 			return !context.KeywordMap.GetKeyword<KeywordCustomShadowPass>().CustomShadowPass;
 
@@ -117,7 +117,7 @@ namespace THUtils.THShader
 
 		#region Protected methods
 
-		internal virtual void WritePass(ShaderBuildContext context, ShaderPassesConfig config)
+		internal virtual void WritePass(ShaderGenerationContext context, ShaderPassesConfig config)
 		{
 			if (UsePassName != null)
 			{

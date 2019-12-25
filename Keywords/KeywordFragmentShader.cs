@@ -14,7 +14,7 @@ namespace THUtils.THShader.Keywords
 
 		#region Public methods
 
-		public override void Write(ShaderBuildContext context)
+		public override void Write(ShaderGenerationContext context)
 		{
 			//todo it migh be more performant to only output a float3 for opaque shaders
 			context.WriteLine("float4 frag(v2f i):COLOR{");
@@ -27,13 +27,13 @@ namespace THUtils.THShader.Keywords
 			context.WriteLine("}");
 		}
 
-		private void WriteFragmentShaderFooter(ShaderBuildContext context)
+		private void WriteFragmentShaderFooter(ShaderGenerationContext context)
 		{
 			context.WriteLine(context.CurrentPass.GetFragmentShaderFooter());
 			context.Newine();
         }
 
-		private void WriteFragmentShaderHeader(ShaderBuildContext context)
+		private void WriteFragmentShaderHeader(ShaderGenerationContext context)
 		{
 			context.WriteLine(context.CurrentPass.GetFragmentShaderHeader());
 			context.Newine();

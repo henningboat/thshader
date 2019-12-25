@@ -46,7 +46,7 @@ namespace THUtils.THShader.Keywords
 
 		#region Public methods
 
-		public virtual void HandleMultiLineKeyword(Queue<string> lines)
+		protected virtual void HandleMultiLineKeyword(Queue<string> lines)
 		{
 		}
 

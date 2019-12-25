@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using THUtils.THShader.Keywords;
-using THUtils.THShader.Passes;
 using UnityEngine;
 
 namespace THUtils.THShader
@@ -75,7 +74,7 @@ Shader ""Hidden/THShaderErrorShader2""
 			{
 				RemoveComments(source);
 
-				var context = new ShaderBuildContext(source, new StringBuilder());
+				var context = new ShaderGenerationContext(source, new StringBuilder());
 
 				GenerateOuter(context, (s) =>
 				                       {
@@ -86,7 +85,7 @@ Shader ""Hidden/THShaderErrorShader2""
 
 				GeneratedShader += context.BuildString();
 			}
-			catch(Exception e)
+			catch (Exception e)
 			{
 				Debug.LogError(e);
 				GeneratedShader = DefaultErrorShader;
@@ -106,7 +105,7 @@ Shader ""Hidden/THShaderErrorShader2""
 			}
 		}
 
-		private void AppendProperties(ShaderBuildContext context)
+		private void AppendProperties(ShaderGenerationContext context)
 		{
 			context.WriteLine($"Properties");
 			context.WriteLine($"{{");
@@ -117,110 +116,11 @@ Shader ""Hidden/THShaderErrorShader2""
 			context.WriteLine($"}}");
 		}
 
-		private void GenerateOuter(ShaderBuildContext context, Action<ShaderBuildContext> action)
+		private void GenerateOuter(ShaderGenerationContext context, Action<ShaderGenerationContext> action)
 		{
 			context.WriteLine($"Shader \"{context.KeywordMap.GetKeyword<KeywordName>().ShaderName}\" {{");
 			context.WriteIndented(action);
 			context.WriteLine($"}}");
-		}
-
-		#endregion
-	}
-
-	public class ShaderBuildContext
-	{
-		#region Public Fields
-
-		public readonly KeywordMap KeywordMap;
-		public ShaderPass CurrentPass;
-		public ShaderPassesConfig CurrentPassConfig;
-
-		#endregion
-
-		#region Private Fields
-
-		private readonly StringBuilder _stringBuilder;
-		private int _indentCount;
-		private IReadOnlyList<string> _keymapSource;
-
-		#endregion
-
-		#region Constructors
-
-		public ShaderBuildContext(IReadOnlyList<string> source, StringBuilder stringBuilder)
-		{
-			_stringBuilder = stringBuilder;
-			_keymapSource = source;
-			KeywordMap = new KeywordMap(new Queue<string>(source));
-		}
-
-		#endregion
-
-		#region Public methods
-
-		public string BuildString()
-		{
-			return _stringBuilder.ToString();
-		}
-
-		public void WriteLine(string text)
-		{
-			if (text == null)
-				return;
-
-			var lines = text.Split(new string[] { "\n", "\r\n" }, StringSplitOptions.None);
-			foreach (string line in lines)
-			{
-				for (int i = 0; i < _indentCount; i++)
-				{
-					_stringBuilder.Append('\t');
-				}
-
-				_stringBuilder.AppendLine(line);
-			}
-		}
-
-		public void WriteIndented(Action<ShaderBuildContext> action)
-		{
-			Indent();
-			action(this);
-			Unindent();
-		}
-
-		public void WriteLineIndented(string line)
-		{
-			Indent();
-			WriteLine(line);
-			Unindent();
-		}
-
-		public ShaderBuildContext CreatePassContext(ShaderBuildContext parent, ShaderPass pass, ShaderPassesConfig config)
-		{
-			return new ShaderBuildContext(parent._keymapSource, parent._stringBuilder)
-			       {
-				       _indentCount = parent._indentCount,
-				       CurrentPass = pass,
-				       CurrentPassConfig = config,
-        };
-		}
-
-		public void Newine()
-		{
-			WriteLine(Environment.NewLine);
-		}
-
-		#endregion
-
-		#region Private methods
-
-		private void Indent()
-		{
-			_indentCount++;
-		}
-
-		private void Unindent()
-		{
-			_indentCount--;
 		}
 
 		#endregion
