@@ -24,7 +24,7 @@ namespace THUtils.THShader.Keywords
 		public override string DefaultLineArguments => null;
 		public override bool MultiLine => true;
 		protected abstract string StructName { get; }
-		private string UserStructName => $"User{StructName}";
+		public string UserStructName => $"User{StructName}";
 
 		#endregion
 
@@ -72,7 +72,7 @@ namespace THUtils.THShader.Keywords
 			context.WriteLine("};");
 
 			context.Newine();
-			context.WriteLine($"{UserStructName} Init{UserStructName}({StructName} input)");
+			context.WriteLine($"{UserStructName} Initialize{UserStructName}({StructName} input)");
 			context.WriteLine("{");
 			context.WriteIndented(SetupUserStructCode);
 			context.WriteLine("}");
@@ -136,27 +136,37 @@ namespace THUtils.THShader.Keywords
 			}
 
 			context.WriteLine($"{UserStructName} output;");
-			foreach (AttributeConfig attribute in _attributes)
+			foreach (AttributeConfig attributeCOnfig in _attributes)
 			{
-				if (!attribute.UserDefined)
+				if (!attributeCOnfig.UserDefined)
 				{
 					continue;
 				}
 
-				for (int i = 0; i < attribute.Dimensions; i++)
+				context.Write($"output.{attributeCOnfig.Name} = {attributeCOnfig.DataTypeAndDimensionsString}(");
+
+				for (int i = 0; i < attributeCOnfig.Dimensions; i++)
 				{
-					AttributeAliasMapEntry mappingEntry;
-					if (attribute.AttributeType == AttributeType.Anonymous)
+					if (i > 0)
 					{
-						mappingEntry = allEntries.First(entry => entry.Name == attribute.Name && entry.Component == i);
+						context.Write(",");
+					}
+
+					AttributeAliasMapEntry mappingEntry;
+					if (attributeCOnfig.AttributeType == AttributeType.Anonymous)
+					{
+						mappingEntry = allEntries.First(entry => entry.AttributeConfig.Name == attributeCOnfig.Name && entry.Component == i);
 					}
 					else
 					{
-						mappingEntry = allEntries.First(entry => entry.AttributeType == attribute.AttributeType && entry.Component == i);
+						mappingEntry = allEntries.First(entry => entry.AttributeType == attributeCOnfig.AttributeType && entry.Component == i);
 					}
 
-					context.WriteLine($"output.{attribute.Name}[{i}] = input.{mappingEntry.AttributeName}[{mappingEntry.IndexInAttribute}];");
+					context.Write($"input.{mappingEntry.AttributeName}[{mappingEntry.IndexInAttribute}]");
 				}
+
+				context.Write(");");
+				context.Newine();
 			}
 
 			context.WriteLine("return output;");
@@ -186,7 +196,7 @@ namespace THUtils.THShader.Keywords
 					for (int j = 0; j < mapping.Entries.Count; j++)
 					{
 						AttributeAliasMapEntry entry = mapping.Entries[j];
-						log += $" {entry.Name}[{entry.Component}],";
+						log += $" {entry.AttributeName}[{entry.Component}],";
 					}
 
 					context.Log(log);
@@ -221,7 +231,7 @@ namespace THUtils.THShader.Keywords
 		private string GetAttributeTypeString(AttributeType attributeType)
 		{
 			string attributeName = attributeType.ToString();
-			if (attributeType == AttributeType.Position && this is KeywordVertexInput)
+			if (attributeType == AttributeType.Position && this is KeywordFragmentInput)
 			{
 				attributeName = "SV_Position";
 			}
@@ -302,7 +312,8 @@ namespace THUtils.THShader.Keywords
 			{
 				for (int i = 0; i < attributeConfig.Dimensions; i++)
 				{
-					GetOrCreateAttributeMap(attributeConfig.DataType, attributeConfig.AttributeType).AddEntry(new AttributeAliasMapEntry(attributeConfig.Name, i, attributeConfig.AttributeType, attributeConfig.DataType));
+					AttributeMapping mapping = GetOrCreateAttributeMap(attributeConfig.DataType, attributeConfig.AttributeType);
+					mapping.AddEntry(new AttributeAliasMapEntry(mapping, i, attributeConfig));
 				}
 			}
 		}
@@ -338,28 +349,33 @@ namespace THUtils.THShader.Keywords
 		{
 			#region Public Fields
 
-			public readonly AttributeType AttributeType;
 			public readonly int Component;
-			public readonly DataType DataType;
-			public readonly string Name;
+
+			#endregion
+
+			#region Private Fields
+
+			public readonly AttributeMapping AttributeMapping;
 
 			#endregion
 
 			#region Properties
 
+			public AttributeType AttributeType => AttributeMapping.AttributeType;
+			public DataType DataTyp => AttributeMapping.DataType;
 			public string AttributeName { get; private set; }
 			public int IndexInAttribute { get; set; }
+			public readonly AttributeConfig AttributeConfig;
 
 			#endregion
 
 			#region Constructors
 
-			public AttributeAliasMapEntry(string name, int component, AttributeType attributeType, DataType dataType)
+			internal AttributeAliasMapEntry(AttributeMapping mapping, int component, AttributeConfig attributeConfig)
 			{
+				AttributeConfig = attributeConfig;
+				AttributeMapping = mapping;
 				Component = component;
-				AttributeType = attributeType;
-				DataType = dataType;
-				Name = name;
 			}
 
 			#endregion
@@ -383,7 +399,7 @@ namespace THUtils.THShader.Keywords
 
 		#region Nested type: AttributeMapping
 
-		private class AttributeMapping
+		internal class AttributeMapping
 		{
 			#region Public Fields
 

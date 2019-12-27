@@ -29,6 +29,8 @@ namespace THUtils.THShader.Passes
 			//todo workaround for now
 			context.KeywordMap.GetKeyword<KeywordHasNormalMap>().Write(context);
 
+			context.WriteLine("\r\n#include \"Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl\"");
+
 			if (SubShaderHeader != null)
 			{
 				context.WriteLine(ShaderPass.ReadSourceFile(SubShaderHeader));

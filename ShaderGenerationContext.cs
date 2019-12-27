@@ -97,7 +97,7 @@ namespace THUtils.THShader
 
 		public void Newine()
 		{
-			WriteLine(Environment.NewLine);
+			WriteLine("");
 		}
 
 		#endregion

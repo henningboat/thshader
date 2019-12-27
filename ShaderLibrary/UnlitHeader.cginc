@@ -1,5 +1,5 @@
 #include "UnityCG.cginc"
 
-struct Output {
+struct UserFragmentOutput {
 	float4 color;
 };

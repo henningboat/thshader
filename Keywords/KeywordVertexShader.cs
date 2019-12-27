@@ -18,33 +18,36 @@ namespace THUtils.THShader.Keywords
 		public override void Write(ShaderGenerationContext context)
 		{
 			context.WriteLine("#define UNITY_SHADER_NO_UPGRADE 1");
-			context.WriteLine("v2f vert(appdata v){");
-			context.WriteLineIndented("	Varyings output = (Varyings)0;");
+
 
 			var vertexInput = context.KeywordMap.GetKeyword<KeywordVertexInput>();
 			var fragmentInput = context.KeywordMap.GetKeyword<KeywordFragmentInput>();
-			
 
-			if (vertexInput.HasPositionAttribute())
-			{
-				string vertexPositionName = vertexInput.GetAttribute(AttributeType.Position).Name;
-				string fragmentPositionName = fragmentInput.GetAttribute(AttributeType.Position).Name;
-				context.WriteLineIndented($"o.{fragmentPositionName}= mul(UNITY_MATRIX_MVP, v.{vertexPositionName});");
-			}
+			context.WriteLine($"void ExecuteUserVertexCode({vertexInput.UserStructName} input, inout {fragmentInput.UserStructName} output)");
+			context.WriteLine("{");
+			context.WriteIndented(base.Write);
+			context.WriteLine("}");
 
 			context.Newine();
-			WriteDefaultCode(context);
-			context.Newine();
+
+			context.WriteLine("Varyings vert(Attributes input){");
+			context.WriteLineIndented("	Varyings output = (Varyings)0;");
+
+			context.WriteLineIndented($"{vertexInput.UserStructName} userInput = Initialize{vertexInput.UserStructName}(input);");
+			context.WriteLineIndented($"{fragmentInput.UserStructName} userOutput = ({fragmentInput.UserStructName})0;");
+
+			//context.Newine();
+			//WriteDefaultCode(context);
+			//context.Newine();
 
 			context.WriteLine(context.CurrentPass.GetVertexShaderHeader());
 			context.Newine();
 
-			context.WriteIndented(base.Write);
-			context.Newine();
+			context.WriteLineIndented("ExecuteUserVertexCode(userInput, userOutput);");
 
 			context.WriteLine(context.CurrentPass.GetVertexShaderFooter());
 
-			context.WriteLineIndented("	return o;");
+			context.WriteLineIndented("	return output;");
 			context.WriteLine("}");
 		}
 
