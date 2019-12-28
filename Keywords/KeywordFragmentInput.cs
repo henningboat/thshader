@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace THUtils.THShader.Keywords
 {
@@ -6,7 +7,7 @@ namespace THUtils.THShader.Keywords
 	{
 		#region Properties
 
-		protected override string StructName => "Varyings";
+		protected override string AttributeStructName => "Varyings";
 
 		#endregion
 
@@ -14,6 +15,16 @@ namespace THUtils.THShader.Keywords
 
 		public KeywordFragmentInput(Queue<string> sourceCode) : base(sourceCode)
 		{
+		}
+
+		#endregion
+
+		#region Public methods
+
+		public override void Write(ShaderGenerationContext context)
+		{
+			base.Write(context);
+			
 		}
 
 		#endregion
@@ -28,6 +39,12 @@ namespace THUtils.THShader.Keywords
 		protected override List<AttributeConfig> GetRequiredPassAttributes(ShaderGenerationContext context)
 		{
 			return context.CurrentPass.RequiredFragmentAttributes;
+		}
+
+		protected override void WriteUserDefinedAttributes(ShaderGenerationContext context, List<AttributeConfig> attributesToUse)
+		{
+			base.WriteUserDefinedAttributes(context, attributesToUse);
+			context.WriteLine("VertexPositionInputs vertexPositionInputs;");
 		}
 
 		#endregion

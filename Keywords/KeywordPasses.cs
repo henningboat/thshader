@@ -5,7 +5,7 @@ using UnityEditor;
 
 namespace THUtils.THShader.Keywords
 {
-	public class KeywordPasses : SingletonKeyword
+	public class KeywordShaderModel : SingletonKeyword
 	{
 		#region Properties
 
@@ -15,7 +15,7 @@ namespace THUtils.THShader.Keywords
 
 		#region Constructors
 
-		public KeywordPasses(Queue<string> sourceCode) : base(sourceCode)
+		public KeywordShaderModel(Queue<string> sourceCode) : base(sourceCode)
 		{
 		}
 

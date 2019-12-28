@@ -22,9 +22,10 @@ namespace THUtils.THShader.Keywords
 		#region Properties
 
 		public override string DefaultLineArguments => null;
+		public string ModelStructName => $"Model{AttributeStructName}";
 		public override bool MultiLine => true;
-		protected abstract string StructName { get; }
-		public string UserStructName => $"User{StructName}";
+		protected abstract string AttributeStructName { get; }
+		public string UserStructName => $"User{AttributeStructName}";
 
 		#endregion
 
@@ -50,7 +51,7 @@ namespace THUtils.THShader.Keywords
 
 			BuildAttributeMap();
 
-			context.WriteLine($"struct {StructName}");
+			context.WriteLine($"struct {AttributeStructName}");
 			context.WriteLine("{");
 
 			context.WriteIndented(WriteAttributeComponents);
@@ -64,18 +65,8 @@ namespace THUtils.THShader.Keywords
 
 			context.WriteLine("};");
 
-			context.WriteLine($"struct {UserStructName}");
-			context.WriteLine("{");
-
-			context.WriteIndented(WriteUserDefinedAttributes);
-
-			context.WriteLine("};");
-
-			context.Newine();
-			context.WriteLine($"{UserStructName} Initialize{UserStructName}({StructName} input)");
-			context.WriteLine("{");
-			context.WriteIndented(SetupUserStructCode);
-			context.WriteLine("}");
+			GenerateStruct(context, UserStructName, _attributes.Where(config => config.UserDefined).ToList());
+			GenerateStruct(context, ModelStructName, _attributes.Where(config => config.ShaderModelDefined).ToList());
 		}
 
 		#endregion
@@ -123,11 +114,49 @@ namespace THUtils.THShader.Keywords
 		protected abstract List<string> GetRequiredPassKeywords(ShaderGenerationContext context);
 		protected abstract List<AttributeConfig> GetRequiredPassAttributes(ShaderGenerationContext context);
 
+		protected virtual void WriteUserDefinedAttributes(ShaderGenerationContext context, List<AttributeConfig> attributesToUse)
+		{
+			foreach (AttributeConfig attribute in attributesToUse)
+			{
+				context.WriteLine($"{attribute.DataTypeAndDimensionsString} {attribute.Name};");
+			}
+		}
+
 		#endregion
 
 		#region Private methods
 
-		private void SetupUserStructCode(ShaderGenerationContext context)
+		private void GenerateStruct(ShaderGenerationContext context, string structName, List<AttributeConfig> includedAttributes)
+		{
+			context.WriteLine($"struct {structName}");
+			context.WriteLine("{");
+
+			context.WriteIndented((c) => WriteUserDefinedAttributes(c, includedAttributes));
+
+			context.WriteLine("};");
+
+			context.Newine();
+			BuildStructCopyFunction(context, "Initialize", structName, includedAttributes, false);
+			BuildStructCopyFunction(context, "ReadBack", structName, includedAttributes, true);
+		}
+
+		private void BuildStructCopyFunction(ShaderGenerationContext context, string functionName, string structName, List<AttributeConfig> includedAttributes, bool isReadBack)
+		{
+			if (!isReadBack)
+			{
+				context.WriteLine($"void {functionName}{structName}({AttributeStructName} input, inout {structName} output)");
+			}
+			else
+			{
+				context.WriteLine($"void {functionName}{structName}({structName} input, inout {AttributeStructName} output)");
+			}
+
+			context.WriteLine("{");
+			context.WriteIndented((c) => { SetupUserStructCode(c, includedAttributes, isReadBack, structName); });
+			context.WriteLine("}");
+		}
+
+		protected virtual void SetupUserStructCode(ShaderGenerationContext context, List<AttributeConfig> attributes, bool isReadback, string structName)
 		{
 			List<AttributeAliasMapEntry> allEntries = new List<AttributeAliasMapEntry>();
 			foreach (AttributeMapping mapping in _attributeMappings)
@@ -135,52 +164,47 @@ namespace THUtils.THShader.Keywords
 				allEntries.AddRange(mapping.Entries);
 			}
 
-			context.WriteLine($"{UserStructName} output;");
-			foreach (AttributeConfig attributeCOnfig in _attributes)
+			if (isReadback)
 			{
-				if (!attributeCOnfig.UserDefined)
+				foreach (AttributeAliasMapEntry entry in allEntries)
 				{
-					continue;
-				}
-
-				context.Write($"output.{attributeCOnfig.Name} = {attributeCOnfig.DataTypeAndDimensionsString}(");
-
-				for (int i = 0; i < attributeCOnfig.Dimensions; i++)
-				{
-					if (i > 0)
+					if (attributes.Any(a => entry.AttributeConfig.Equals(a)))
 					{
-						context.Write(",");
+						context.WriteLine($"output.{entry.AttributeMapping.Name}[{entry.IndexInAttribute}] = input.{entry.AttributeConfig.Name}[{entry.Component}];");
 					}
-
-					AttributeAliasMapEntry mappingEntry;
-					if (attributeCOnfig.AttributeType == AttributeType.Anonymous)
-					{
-						mappingEntry = allEntries.First(entry => entry.AttributeConfig.Name == attributeCOnfig.Name && entry.Component == i);
-					}
-					else
-					{
-						mappingEntry = allEntries.First(entry => entry.AttributeType == attributeCOnfig.AttributeType && entry.Component == i);
-					}
-
-					context.Write($"input.{mappingEntry.AttributeName}[{mappingEntry.IndexInAttribute}]");
-				}
-
-				context.Write(");");
-				context.Newine();
-			}
-
-			context.WriteLine("return output;");
-		}
-
-		private void WriteUserDefinedAttributes(ShaderGenerationContext context)
-		{
-			foreach (AttributeConfig attribute in _attributes)
-			{
-				if (attribute.UserDefined)
-				{
-					context.WriteLine($"{attribute.DataTypeAndDimensionsString} {attribute.Name};");
 				}
 			}
+			else
+            {
+				//todo this can be simplified by doing it in the same way as the attributes
+	            foreach (AttributeConfig attributeConfig in attributes)
+	            {
+		            context.Write($"output.{attributeConfig.Name} = {attributeConfig.DataTypeAndDimensionsString}(");
+
+		            for (int i = 0; i < attributeConfig.Dimensions; i++)
+		            {
+			            if (i > 0)
+			            {
+				            context.Write(",");
+			            }
+
+			            AttributeAliasMapEntry mappingEntry;
+			            if (attributeConfig.AttributeType == AttributeType.Anonymous)
+			            {
+				            mappingEntry = allEntries.First(entry => entry.AttributeConfig.Name == attributeConfig.Name && entry.Component == i);
+			            }
+			            else
+			            {
+				            mappingEntry = allEntries.First(entry => entry.AttributeType == attributeConfig.AttributeType && entry.Component == i);
+			            }
+
+			            context.Write($"input.{mappingEntry.AttributeName}[{mappingEntry.IndexInAttribute}]");
+		            }
+
+		            context.Write(");");
+		            context.Newine();
+	            }
+            }
 		}
 
 		private void WriteAttributeComponents(ShaderGenerationContext context)
@@ -196,7 +220,7 @@ namespace THUtils.THShader.Keywords
 					for (int j = 0; j < mapping.Entries.Count; j++)
 					{
 						AttributeAliasMapEntry entry = mapping.Entries[j];
-						log += $" {entry.AttributeName}[{entry.Component}],";
+						log += $" {entry.AttributeConfig.Name}[{entry.Component}],";
 					}
 
 					context.Log(log);
@@ -349,13 +373,9 @@ namespace THUtils.THShader.Keywords
 		{
 			#region Public Fields
 
-			public readonly int Component;
-
-			#endregion
-
-			#region Private Fields
-
+			public readonly AttributeConfig AttributeConfig;
 			public readonly AttributeMapping AttributeMapping;
+			public readonly int Component;
 
 			#endregion
 
@@ -365,7 +385,6 @@ namespace THUtils.THShader.Keywords
 			public DataType DataTyp => AttributeMapping.DataType;
 			public string AttributeName { get; private set; }
 			public int IndexInAttribute { get; set; }
-			public readonly AttributeConfig AttributeConfig;
 
 			#endregion
 

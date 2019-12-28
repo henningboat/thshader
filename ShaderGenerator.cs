@@ -81,7 +81,7 @@ Shader ""Hidden/THShaderErrorShader2""
 				                       {
 					                       AppendProperties(s);
 
-					                       context.KeywordMap.GetKeyword<KeywordPasses>().GeneratePasses(s);
+					                       context.KeywordMap.GetKeyword<KeywordShaderModel>().GeneratePasses(s);
 				                       });
 
 				GeneratedShader += context.BuildString();

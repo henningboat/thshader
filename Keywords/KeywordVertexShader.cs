@@ -33,19 +33,30 @@ namespace THUtils.THShader.Keywords
 			context.WriteLine("Varyings vert(Attributes input){");
 			context.WriteLineIndented("	Varyings output = (Varyings)0;");
 
-			context.WriteLineIndented($"{vertexInput.UserStructName} userInput = Initialize{vertexInput.UserStructName}(input);");
+			context.WriteLineIndented($"{vertexInput.ModelStructName} modelInput = ({vertexInput.ModelStructName})0;");
+			context.WriteLineIndented($"Initialize{vertexInput.ModelStructName}(input, modelInput);");
+
+			context.WriteLineIndented("VertexPositionInputs vertexPositionInputs;");
+			context.WriteLineIndented("vertexPositionInputs = GetVertexPositionInputs(modelInput.positionOS);");
+
+			context.WriteLineIndented($"{vertexInput.UserStructName} userInput = ({vertexInput.UserStructName})0;");
+			context.WriteLineIndented($"Initialize{vertexInput.UserStructName}(input, userInput);");
 			context.WriteLineIndented($"{fragmentInput.UserStructName} userOutput = ({fragmentInput.UserStructName})0;");
+			context.WriteLineIndented($"{fragmentInput.ModelStructName} modelOutput = ({fragmentInput.ModelStructName})0;");
 
-			//context.Newine();
-			//WriteDefaultCode(context);
-			//context.Newine();
-
-			context.WriteLine(context.CurrentPass.GetVertexShaderHeader());
-			context.Newine();
+			context.WriteLineIndented("userOutput.vertexPositionInputs = vertexPositionInputs;");
 
 			context.WriteLineIndented("ExecuteUserVertexCode(userInput, userOutput);");
+			context.WriteLineIndented($"ReadBack{fragmentInput.UserStructName}(userOutput, output);");
+
+			context.WriteLine(context.CurrentPass.GetVertexShaderHeader());
+
+			context.WriteLineIndented($"modelOutput.vertexPositionInputs = userOutput.vertexPositionInputs;");
 
 			context.WriteLine(context.CurrentPass.GetVertexShaderFooter());
+
+			context.WriteLineIndented("ReadBackModelVaryings(modelOutput, output);");
+			context.WriteLineIndented("output.PositionData = modelOutput.vertexPositionInputs.positionCS;");
 
 			context.WriteLineIndented("	return output;");
 			context.WriteLine("}");

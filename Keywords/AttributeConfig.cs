@@ -59,5 +59,8 @@ namespace THUtils.THShader.Keywords
 		internal readonly string Name;
 		internal readonly AttributeType AttributeType;
 		internal readonly bool UserDefined;
+
+		//todo it should be possible that a shader model and a user define the same model
+		internal bool ShaderModelDefined => !UserDefined;
 	}
 }

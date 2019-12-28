@@ -13,14 +13,14 @@ namespace THUtils.THShader.Passes
 		public override List<AttributeConfig> RequiredFragmentAttributes =>
 			new List<AttributeConfig>()
 			{
-				new AttributeConfig(AttributeType.TexCoord0, DataType.@float, 4, "texcoord0"),
-				new AttributeConfig(AttributeType.TexCoord2, DataType.@float, 3, "positionWS"),
-				new AttributeConfig(AttributeType.Normal, DataType.@float, 4, "normalWS"),
-				new AttributeConfig(AttributeType.TexCoord4, DataType.@float, 4, "tangentWS"),
-				new AttributeConfig(AttributeType.TexCoord5, DataType.@float, 4, "bitangentWS"),
-				new AttributeConfig(AttributeType.TexCoord6, DataType.@float, 4, "fogFactorAndVertexLight"),
-				new AttributeConfig(AttributeType.TexCoord7, DataType.@float, 4, "shadowCoord"),
-				new AttributeConfig(AttributeType.Tangent, DataType.@float, 3, "viewDirWS"),
+				new AttributeConfig(AttributeType.Anonymous, DataType.@float, 4, "texcoord0"),
+				new AttributeConfig(AttributeType.Anonymous, DataType.@float, 3, "positionWS"),
+				new AttributeConfig(AttributeType.Anonymous, DataType.@float, 4, "normalWS"),
+				new AttributeConfig(AttributeType.Anonymous, DataType.@float, 4, "tangentWS"),
+				new AttributeConfig(AttributeType.Anonymous, DataType.@float, 4, "bitangentWS"),
+				new AttributeConfig(AttributeType.Anonymous, DataType.@float, 4, "fogFactorAndVertexLight"),
+				new AttributeConfig(AttributeType.Anonymous, DataType.@float, 4, "shadowCoord"),
+				new AttributeConfig(AttributeType.Anonymous, DataType.@float, 3, "viewDirWS"),
 				new AttributeConfig(AttributeType.Position, DataType.@float, 4, "positionCS"),
 			};
 
@@ -37,8 +37,8 @@ namespace THUtils.THShader.Passes
 				new AttributeConfig(AttributeType.Position, DataType.@float, 4, "vertex"),
 				new AttributeConfig(AttributeType.Normal, DataType.@float, 3, "normalOS"),
 				new AttributeConfig(AttributeType.Tangent, DataType.@float, 4, "tangentOS"),
-				new AttributeConfig(AttributeType.TexCoord0, DataType.@float, 4, "texcoord0"),
-				new AttributeConfig(AttributeType.TexCoord1, DataType.@float, 4, "lightmapUV"),
+				new AttributeConfig(AttributeType.TexCoord0, DataType.@float, 2, "texcoord0"),
+				new AttributeConfig(AttributeType.TexCoord1, DataType.@float, 2, "lightmapUV"),
 			};
 
 		public override List<string> RequiredVertexKeywords => new List<string>()

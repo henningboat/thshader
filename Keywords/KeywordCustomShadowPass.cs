@@ -3,7 +3,7 @@ using System.Collections.Generic;
 namespace THUtils.THShader.Keywords
 {
 	//todo allow explicitly disabling passes
-	internal class KeywordCustomShadowPass : KeywordPasses
+	internal class KeywordCustomShadowPass : KeywordShaderModel
 	{
 		#region Properties
 

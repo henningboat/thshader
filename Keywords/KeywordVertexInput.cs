@@ -7,7 +7,7 @@ namespace THUtils.THShader.Keywords
 	{
 		#region Properties
 
-		protected override string StructName => "Attributes";
+		protected override string AttributeStructName => "Attributes";
 
 		#endregion
 
@@ -69,11 +69,6 @@ namespace THUtils.THShader.Keywords
 				{
 					continue;
 				}
-
-				//if (!_attributes.ContainsKey(fragmentAttribute.AttributeType))
-				//{
-				//	_attributes[fragmentAttribute.AttributeType] = fragmentAttribute;
-				//}
 			}
 		}
 

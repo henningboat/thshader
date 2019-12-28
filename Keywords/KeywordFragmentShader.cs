@@ -26,7 +26,8 @@ namespace THUtils.THShader.Keywords
 
 			//todo it migh be more performant to only output a float3 for opaque shaders
 			context.WriteLine("float4 frag(Varyings input) : COLOR{");
-			context.WriteLineIndented("UserVaryings userInput = InitializeUserVaryings(input);");
+			context.WriteLineIndented("UserVaryings userInput = (UserVaryings)0;");
+			context.WriteLineIndented("InitializeUserVaryings(input, userInput);");
 
 			context.WriteIndented(WriteFragmentShaderHeader);
 
@@ -37,11 +38,15 @@ namespace THUtils.THShader.Keywords
 			context.WriteLine("}");
 		}
 
+		#endregion
+
+		#region Private methods
+
 		private void WriteFragmentShaderFooter(ShaderGenerationContext context)
 		{
 			context.WriteLine(context.CurrentPass.GetFragmentShaderFooter());
 			context.Newine();
-        }
+		}
 
 		private void WriteFragmentShaderHeader(ShaderGenerationContext context)
 		{
