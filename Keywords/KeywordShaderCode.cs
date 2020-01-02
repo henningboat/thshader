@@ -51,5 +51,10 @@ namespace THUtils.THShader.Keywords
 		}
 
 		#endregion
+
+		protected void WriteIncludeFile(string getVertexShaderHeader)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

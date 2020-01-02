@@ -7,7 +7,7 @@ namespace THUtils.THShader.Keywords
 	{
 		#region Properties
 
-		protected override string AttributeStructName => "Attributes";
+		public override string AttributeStructName => "Attributes";
 
 		#endregion
 

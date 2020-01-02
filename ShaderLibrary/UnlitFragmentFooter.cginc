@@ -1,1 +1,1 @@
-return userOutput.color;
+return output.color;

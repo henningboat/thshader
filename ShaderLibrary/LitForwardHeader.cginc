@@ -13,7 +13,7 @@
 
 #pragma multi_compile_fog
 
-void InitializeInputData(v2f input, half3 normalTS, out InputData inputData)
+void InitializeInputData(Varyings input, half3 normalTS, out InputData inputData)
 {
 	inputData = (InputData)0;
 

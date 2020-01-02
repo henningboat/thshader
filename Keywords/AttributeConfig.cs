@@ -33,6 +33,9 @@ namespace THUtils.THShader.Keywords
 			}
 		}
 
+		//todo it should be possible that a shader model and a user define the same model
+		internal bool ShaderModelDefined => !UserDefined;
+
 		#endregion
 
 		#region Constructors
@@ -54,13 +57,36 @@ namespace THUtils.THShader.Keywords
 
 		#endregion
 
+		#region Public methods
+
+		public void WriteAttributeDefinition(ShaderGenerationContext context, int attributeIndex, bool isFragmentShader)
+		{
+			context.WriteLine($"{DataTypeAndDimensionsString} {Name} : ");
+			if (AttributeType == AttributeType.Anonymous)
+			{
+				context.Write($"COLOR1{attributeIndex}");
+			}
+			else
+			{
+				if (isFragmentShader && AttributeType == AttributeType.Position)
+				{
+					context.Write("SV_POSITION");
+				}
+				else
+				{
+					context.Write(AttributeType.ToString());
+				}
+			}
+
+			context.Write(";");
+		}
+
+		#endregion
+
 		internal readonly DataType DataType;
 		internal readonly uint Dimensions;
 		internal readonly string Name;
 		internal readonly AttributeType AttributeType;
 		internal readonly bool UserDefined;
-
-		//todo it should be possible that a shader model and a user define the same model
-		internal bool ShaderModelDefined => !UserDefined;
 	}
 }

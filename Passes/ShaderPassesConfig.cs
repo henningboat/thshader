@@ -3,7 +3,7 @@ using THUtils.THShader.Keywords;
 
 namespace THUtils.THShader.Passes
 {
-	public abstract class ShaderPassesConfig
+	public abstract class ShaderModel
 	{
 		#region Properties
 
@@ -14,7 +14,7 @@ namespace THUtils.THShader.Passes
 
 		#region Constructors
 
-		public ShaderPassesConfig()
+		public ShaderModel()
 		{
 		}
 
@@ -33,10 +33,7 @@ namespace THUtils.THShader.Passes
 			context.WriteLine("#include \"Packages/com.henningboat.thshader/ShaderLibrary/Common.cginc\"");
 			context.WriteLine("ENDHLSL");
 
-            if (SubShaderHeader != null)
-			{
-				context.WriteLine(ShaderPass.ReadSourceFile(SubShaderHeader));
-			}
+			context.WriteLine(ShaderPass.ReadSourceFile(context, SubShaderHeader));
 
 			foreach (ShaderPass pass in GeneratePasses(context))
 			{

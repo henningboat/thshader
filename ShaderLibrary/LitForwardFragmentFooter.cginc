@@ -1,8 +1,8 @@
-InputData inputData;
-InitializeInputData(i, o.normalTS, inputData);
+InputData __inputData;
+InitializeInputData(input, output.normalTS, __inputData);
 
 
-half4 color = UniversalFragmentPBR(inputData, o.albedo, o.metallic, o.specular, o.smoothness, o.occlusion, o.emission, o.alpha);
+half4 __color = UniversalFragmentPBR(__inputData, output.albedo, output.metallic, output.specular, output.smoothness, output.occlusion, output.emission, output.alpha);
 
-color.rgb = MixFog(color.rgb, inputData.fogCoord);
-return color;
+__color.rgb = MixFog(__color.rgb, __inputData.fogCoord);
+return __color;

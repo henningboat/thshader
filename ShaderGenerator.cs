@@ -93,7 +93,7 @@ Shader ""Hidden/THShaderErrorShader2""
 				{
 					GeneratedShader += context.BuildString();
 				}
-				GeneratedShader += "\n";
+				GeneratedShader += "\n #error";
 				GeneratedShader += e;
 				Debug.LogError("Failed to import thshader");
 			}

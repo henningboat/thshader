@@ -1,5 +1,5 @@
 
 #ifdef LOD_FADE_CROSSFADE
-LODDitheringTransition(IN.vertex.xyz, unity_LODFade.x);
+LODDitheringTransition(input.__VARYINGSPOSITION.xyt, unity_LODFade.x);
 #endif
 return 0;

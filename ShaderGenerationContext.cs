@@ -11,7 +11,7 @@ namespace THUtils.THShader
 
 		public readonly KeywordMap KeywordMap;
 		public ShaderPass CurrentPass;
-		public ShaderPassesConfig CurrentPassConfig;
+		public ShaderModel CurrentPassConfig;
 
 		#endregion
 
@@ -50,16 +50,17 @@ namespace THUtils.THShader
 		{
 			if (text == null)
 				return;
-
+			
 			var lines = text.Split(new string[] { "\n", "\r\n" }, StringSplitOptions.None);
 			foreach (string line in lines)
 			{
+				_stringBuilder.Append(Environment.NewLine);
 				for (int i = 0; i < _indentCount; i++)
 				{
 					_stringBuilder.Append('\t');
 				}
 
-				_stringBuilder.AppendLine(line);
+				_stringBuilder.Append(line);
 			}
 		}
 
@@ -85,7 +86,7 @@ namespace THUtils.THShader
 			Unindent();
 		}
 
-		public ShaderGenerationContext CreatePassContext(ShaderGenerationContext parent, ShaderPass pass, ShaderPassesConfig config)
+		public ShaderGenerationContext CreatePassContext(ShaderGenerationContext parent, ShaderPass pass, ShaderModel config)
 		{
 			return new ShaderGenerationContext(parent._keymapSource, parent._stringBuilder)
 			       {

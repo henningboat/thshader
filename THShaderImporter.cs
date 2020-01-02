@@ -23,6 +23,8 @@ namespace THUtils.THShader
 			string path = sourceFilePath.Replace(".thshader", ".shader");
 			File.WriteAllText(path, generator.GeneratedShader);
 
+			AssetDatabase.ImportAsset(assetPath.Replace(".thshader", ".shader"));
+
 			//var shader = ShaderUtil.CreateShaderAsset(generator.GeneratedShader, false);
 			//ctx.AddObjectToAsset("MainAsset", shader);
 			//ctx.SetMainObject(shader);

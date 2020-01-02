@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using THUtils.THShader.Keywords;
 using THUtils.THShader.Passes;
-using UnityEngine;
 
 namespace THUtils.THShader
 {
@@ -12,23 +11,36 @@ namespace THUtils.THShader
 	{
 		#region Static Stuff
 
-		public static string ReadSourceFile(string path)
+		public static string ReadSourceFile(ShaderGenerationContext context, string path)
 		{
 			if (path == null)
 			{
 				return "";
 			}
 
-			string combine = Path.GetFullPath(Path.Combine("Packages/com.henningboat.thshader", path));
-			try
+			if (!context.KeywordMap.GetKeyword<KeywordDebugMode>().IsDebug)
 			{
-				return File.ReadAllText(combine);
+				return $"#include \"Packages/com.henningboat.thshader/{path}\"";
 			}
-			catch (Exception e)
+			else
 			{
-				throw new KeywordMap.ShaderGenerationException("failed reading source file " + combine);
+				string combine = Path.GetFullPath(Path.Combine("Packages/com.henningboat.thshader", path));
+				try
+				{
+					return File.ReadAllText(combine);
+				}
+				catch (Exception e)
+				{
+					throw new KeywordMap.ShaderGenerationException("failed reading source file " + combine);
+				}
 			}
 		}
+
+		#endregion
+
+		#region Private Fields
+
+		private ShaderGenerationContext _context;
 
 		#endregion
 
@@ -51,29 +63,29 @@ namespace THUtils.THShader
 
 		#region Public methods
 
-		public string GetShaderHeader()
+		private string GetShaderHeader()
 		{
-			return ReadSourceFile(ShaderHeaderPath);
+			return ReadSourceFile(_context, ShaderHeaderPath);
 		}
 
 		public string GetFragmentShaderHeader()
 		{
-			return ReadSourceFile(FragmentShaderHeaderPath);
+			return ReadSourceFile(_context, FragmentShaderHeaderPath);
 		}
 
 		public string GetFragmentShaderFooter()
 		{
-			return ReadSourceFile(FragmentShaderFooterPath);
+			return ReadSourceFile(_context, FragmentShaderFooterPath);
 		}
 
 		public string GetVertexShaderHeader()
 		{
-			return ReadSourceFile(VertexShaderHeaderPath);
+			return ReadSourceFile(_context, VertexShaderHeaderPath);
 		}
 
 		public string GetVertexShaderFooter()
 		{
-			return ReadSourceFile(VertexShaderFooterPath);
+			return ReadSourceFile(_context, VertexShaderFooterPath);
 		}
 
 		#endregion
@@ -82,13 +94,13 @@ namespace THUtils.THShader
 
 		private void WriteInnerPass(ShaderGenerationContext context)
 		{
+			_context = context;
 			var pipelineState = new PipelineState();
 			pipelineState.Generate(context);
 
 			context.WriteLine("HLSLPROGRAM");
 			context.WriteLine("#pragma vertex vert");
 			context.WriteLine("#pragma fragment frag");
-
 
 			context.KeywordMap.GetMultiKeywords<KeywordProperty>().ForEach(keyword => keyword.Write(context, false));
 			context.KeywordMap.GetMultiKeywords<KeywordCodeBlock>().ForEach(block => block.Write(context));
@@ -98,7 +110,7 @@ namespace THUtils.THShader
 
 			context.WriteLine(GetShaderHeader());
 
-            context.KeywordMap.GetKeyword<KeywordVertexShader>().Write(context);
+			context.KeywordMap.GetKeyword<KeywordVertexShader>().Write(context);
 			context.KeywordMap.GetKeyword<KeywordFragmentShader>().Write(context);
 
 			context.WriteLine("ENDHLSL");
@@ -106,7 +118,7 @@ namespace THUtils.THShader
 
 		private bool ShouldWriteUsePassInstead(ShaderGenerationContext context)
 		{
-			return !context.KeywordMap.GetKeyword<KeywordCustomShadowPass>().CustomShadowPass;
+			return context.KeywordMap.GetKeyword<KeywordCustomShadowPass>().CustomShadowPass;
 
 			bool hasUserDefinedVertexPosition = context.KeywordMap.GetKeyword<KeywordVertexInput>().GetAttributes().Any(config => config.AttributeType == AttributeType.Position && config.UserDefined);
 
@@ -117,7 +129,7 @@ namespace THUtils.THShader
 
 		#region Protected methods
 
-		internal virtual void WritePass(ShaderGenerationContext context, ShaderPassesConfig config)
+		internal virtual void WritePass(ShaderGenerationContext context, ShaderModel config)
 		{
 			if (UsePassName != null)
 			{

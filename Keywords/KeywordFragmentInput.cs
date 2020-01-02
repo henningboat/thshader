@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 
 namespace THUtils.THShader.Keywords
 {
@@ -7,7 +6,7 @@ namespace THUtils.THShader.Keywords
 	{
 		#region Properties
 
-		protected override string AttributeStructName => "Varyings";
+		public override string AttributeStructName => "Varyings";
 
 		#endregion
 
@@ -24,7 +23,10 @@ namespace THUtils.THShader.Keywords
 		public override void Write(ShaderGenerationContext context)
 		{
 			base.Write(context);
-			
+			if (GetAttribute(AttributeType.Position).UserDefined)
+			{
+				throw new KeywordMap.ShaderGenerationException("You are not supposed to manipulate the clip space position manually. Use SETPOSITIONOS(float3) or SETPOSITIONWS(float3) instead to ensure compatibility with all templates");
+			}
 		}
 
 		#endregion
@@ -39,12 +41,6 @@ namespace THUtils.THShader.Keywords
 		protected override List<AttributeConfig> GetRequiredPassAttributes(ShaderGenerationContext context)
 		{
 			return context.CurrentPass.RequiredFragmentAttributes;
-		}
-
-		protected override void WriteUserDefinedAttributes(ShaderGenerationContext context, List<AttributeConfig> attributesToUse)
-		{
-			base.WriteUserDefinedAttributes(context, attributesToUse);
-			context.WriteLine("VertexPositionInputs vertexPositionInputs;");
 		}
 
 		#endregion

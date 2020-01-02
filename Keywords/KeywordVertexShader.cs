@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
+// ReSharper disable StringLiteralTypo
 namespace THUtils.THShader.Keywords
 {
 	internal class KeywordVertexShader : KeywordShaderCode
@@ -19,46 +20,25 @@ namespace THUtils.THShader.Keywords
 		{
 			context.WriteLine("#define UNITY_SHADER_NO_UPGRADE 1");
 
-
 			var vertexInput = context.KeywordMap.GetKeyword<KeywordVertexInput>();
 			var fragmentInput = context.KeywordMap.GetKeyword<KeywordFragmentInput>();
-
-			context.WriteLine($"void ExecuteUserVertexCode({vertexInput.UserStructName} input, inout {fragmentInput.UserStructName} output)");
-			context.WriteLine("{");
-			context.WriteIndented(base.Write);
-			context.WriteLine("}");
 
 			context.Newine();
 
 			context.WriteLine("Varyings vert(Attributes input){");
-			context.WriteLineIndented("	Varyings output = (Varyings)0;");
+			context.WriteLine("	Varyings output = (Varyings)0;");
 
-			context.WriteLineIndented($"{vertexInput.ModelStructName} modelInput = ({vertexInput.ModelStructName})0;");
-			context.WriteLineIndented($"Initialize{vertexInput.ModelStructName}(input, modelInput);");
-
-			context.WriteLineIndented("VertexPositionInputs vertexPositionInputs;");
-			context.WriteLineIndented("vertexPositionInputs = GetVertexPositionInputs(modelInput.positionOS);");
-
-			context.WriteLineIndented($"{vertexInput.UserStructName} userInput = ({vertexInput.UserStructName})0;");
-			context.WriteLineIndented($"Initialize{vertexInput.UserStructName}(input, userInput);");
-			context.WriteLineIndented($"{fragmentInput.UserStructName} userOutput = ({fragmentInput.UserStructName})0;");
-			context.WriteLineIndented($"{fragmentInput.ModelStructName} modelOutput = ({fragmentInput.ModelStructName})0;");
-
-			context.WriteLineIndented("userOutput.vertexPositionInputs = vertexPositionInputs;");
-
-			context.WriteLineIndented("ExecuteUserVertexCode(userInput, userOutput);");
-			context.WriteLineIndented($"ReadBack{fragmentInput.UserStructName}(userOutput, output);");
+			context.WriteLine("VertexPositionInputs __vertexPositionInputs = GetVertexPositionInputs(input.__ATTRIBUTESPOSITION);");
 
 			context.WriteLine(context.CurrentPass.GetVertexShaderHeader());
 
-			context.WriteLineIndented($"modelOutput.vertexPositionInputs = userOutput.vertexPositionInputs;");
+			base.Write(context);
 
 			context.WriteLine(context.CurrentPass.GetVertexShaderFooter());
 
-			context.WriteLineIndented("ReadBackModelVaryings(modelOutput, output);");
-			context.WriteLineIndented("output.PositionData = modelOutput.vertexPositionInputs.positionCS;");
+			context.WriteLine("output.__VARYINGSPOSITION = __vertexPositionInputs.positionCS;");
 
-			context.WriteLineIndented("	return output;");
+			context.WriteLine("	return output;");
 			context.WriteLine("}");
 		}
 

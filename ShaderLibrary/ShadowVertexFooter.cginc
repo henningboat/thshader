@@ -1,13 +1,10 @@
-float3 positionWS = TransformObjectToWorld(v.vertex.xyz);
-float3 normalWS = TransformObjectToWorldDir(v.normal);
+float3 __normalWS = TransformObjectToWorldDir(input.__ATTRIBUTESNORMAL);
 
-float4 clipPos = TransformWorldToHClip(ApplyShadowBias(positionWS, normalWS, _LightDirection));
+float4 __clipPos = TransformWorldToHClip(ApplyShadowBias(__vertexPositionInputs.positionWS, __normalWS, _LightDirection));
 
 #if UNITY_REVERSED_Z
-clipPos.z = min(clipPos.z, clipPos.w * UNITY_NEAR_CLIP_VALUE);
+__clipPos.z = min(__clipPos.z, __clipPos.w * UNITY_NEAR_CLIP_VALUE);
 #else
-clipPos.z = max(clipPos.z, clipPos.w * UNITY_NEAR_CLIP_VALUE);
+__clipPos.z = max(__clipPos.z, __clipPos.w * UNITY_NEAR_CLIP_VALUE);
 #endif
-o.vertex = clipPos;
-
-return o;
+__vertexPositionInputs.positionCS = __clipPos;

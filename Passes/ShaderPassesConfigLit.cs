@@ -3,7 +3,7 @@ using System.Collections.Generic;
 namespace THUtils.THShader.Passes
 {
 	// ReSharper disable once UnusedMember.Global
-	public class ShaderPassesConfigLit : ShaderPassesConfig
+	public class ShaderModelLit : ShaderModel
 	{
 		#region Properties
 

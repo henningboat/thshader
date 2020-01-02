@@ -1,33 +1,26 @@
-VertexPositionInputs vertexInput = GetVertexPositionInputs(v.vertex.xyz);
-VertexNormalInputs normalInput = GetVertexNormalInputs(v.normalOS, v.tangentOS);
-half3 viewDirWS = GetCameraPositionWS() - vertexInput.positionWS;
-half3 vertexLight = VertexLighting(vertexInput.positionWS, normalInput.normalWS);
-half fogFactor = ComputeFogFactor(vertexInput.positionCS.z);
-
-o.texcoord0 = v.texcoord0;
+VertexNormalInputs normalInput = GetVertexNormalInputs(input.__ATTRIBUTESNORMAL, input.__ATTRIBUTESTANGENT);
+half3 __viewDirWS = GetCameraPositionWS() - __vertexPositionInputs.positionWS;
+half3 __vertexLight = VertexLighting(__vertexPositionInputs.positionWS, normalInput.normalWS);
+half fogFactor = ComputeFogFactor(__vertexPositionInputs.positionCS.z);
 
 #ifdef _NORMALMAP
-o.normalWS = half4(normalInput.normalWS, viewDirWS.x);
-o.tangentWS = half4(normalInput.tangentWS, viewDirWS.y);
-o.bitangentWS = half4(normalInput.bitangentWS, viewDirWS.z);
+output.normalWS = half4(normalInput.normalWS, __viewDirWS.x);
+output.tangentWS = half4(normalInput.tangentWS, __viewDirWS.y);
+output.bitangentWS = half4(normalInput.bitangentWS, __viewDirWS.z);
 #else
-o.normalWS.xyz = NormalizeNormalPerVertex(normalInput.normalWS.xyz);
-o.viewDirWS = viewDirWS.xyz;
+output.normalWS.xyz = NormalizeNormalPerVertex(normalInput.normalWS.xyz);
+output.viewDirWS = __viewDirWS.xyz;
 #endif
 
-OUTPUT_LIGHTMAP_UV(v.lightmapUV, unity_LightmapST, o.lightmapUV);
-OUTPUT_SH(o.normalWS.xyz, o.vertexSH);
+OUTPUT_LIGHTMAP_UV(input.lightmapUV, unity_LightmapST, output.lightmapUV);
+OUTPUT_SH(output.normalWS.xyz, output.vertexSH);
 
-o.fogFactorAndVertexLight = half4(fogFactor, vertexLight);
+output.fogFactorAndVertexLight = half4(fogFactor, __vertexLight);
 
 #ifdef _ADDITIONAL_LIGHTS
-o.positionWS = vertexInput.positionWS;
+output.positionWS = __vertexPositionInputs.positionWS;
 #endif
 
 #if defined(_MAIN_LIGHT_SHADOWS) && !defined(_RECEIVE_SHADOWS_OFF)
-o.shadowCoord = GetShadowCoord(vertexInput);
+output.shadowCoord = GetShadowCoord(__vertexPositionInputs);
 #endif
-
-o.positionCS = vertexInput.positionCS;
-
-return o;

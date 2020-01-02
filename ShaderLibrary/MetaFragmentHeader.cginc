@@ -1,2 +1,2 @@
-SurfaceData surfaceData;
-InitializeStandardLitSurfaceData(i.texcoord0, surfaceData);
+SurfaceData output;
+InitializeStandardLitSurfaceData(input.__VARYINGSTEXCOORD0, output);

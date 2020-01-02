@@ -1,9 +1,9 @@
-BRDFData brdfData;
-InitializeBRDFData(o.albedo, o.metallic, o.specular, o.smoothness, o.alpha, brdfData);
+BRDFData __brdfData;
+InitializeBRDFData(output.albedo, output.metallic, output.specular, output.smoothness, output.alpha, __brdfData);
 
-MetaInput metaInput;
-metaInput.Albedo = brdfData.diffuse + brdfData.specular * brdfData.roughness * 0.5;
-metaInput.SpecularColor = o.specular;
-metaInput.Emission = o.emission;
+MetaInput __metaInput;
+__metaInput.Albedo = __brdfData.diffuse + __brdfData.specular * __brdfData.roughness * 0.5;
+__metaInput.SpecularColor = output.specular;
+__metaInput.Emission = output.emission;
 
-return MetaFragment(metaInput);
+return MetaFragment(__metaInput);

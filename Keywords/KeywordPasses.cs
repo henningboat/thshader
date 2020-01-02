@@ -23,16 +23,16 @@ namespace THUtils.THShader.Keywords
 
 		#region Private methods
 
-		private ShaderPassesConfig GetPassesConfig()
+		private ShaderModel GetShaderModel()
 		{
-			string passConfigTypeName = "ShaderPassesConfig" + FirstLineArguments;
-			var possibleConfigs = TypeCache.GetTypesDerivedFrom<ShaderPassesConfig>();
+			string passConfigTypeName = "ShaderModel" + FirstLineArguments;
+			var possibleConfigs = TypeCache.GetTypesDerivedFrom<ShaderModel>();
 
 			foreach (Type config in possibleConfigs)
 			{
 				if (config.Name == passConfigTypeName)
 				{
-					return (ShaderPassesConfig) Activator.CreateInstance(config);
+					return (ShaderModel) Activator.CreateInstance(config);
 				}
 			}
 
@@ -45,7 +45,7 @@ namespace THUtils.THShader.Keywords
 		{
 			context.WriteLine("SubShader{");
 
-			var passes = GetPassesConfig();
+			var passes = GetShaderModel();
 			context.WriteIndented(passes.Write);
 
 			context.WriteLine("}");

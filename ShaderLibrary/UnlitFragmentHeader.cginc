@@ -1,1 +1,1 @@
-UserFragmentOutput userOutput = (UserFragmentOutput)0;
+UserFragmentOutput output = (UserFragmentOutput)0;

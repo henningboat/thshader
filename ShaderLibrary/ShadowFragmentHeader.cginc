@@ -1,4 +1,4 @@
-UNITY_SETUP_INSTANCE_ID(i);
-UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
+UNITY_SETUP_INSTANCE_ID(input);
+UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
 
-SurfaceData o = (SurfaceData)0;
+SurfaceData output = (SurfaceData)0;
