@@ -14,7 +14,7 @@ if you define a FragmentInput with an attribute, for example, _float2 lightmapUV
 # how to use
 Simply add the following line to your projects Packages/magifest.json file
 ```
-"com.henningboat/thshader": "https://github.com/henningboat/thshader.git,
+	"com.henningboat/thshader": "https://github.com/henningboat/thshader.git"
 ```
 
 # example
