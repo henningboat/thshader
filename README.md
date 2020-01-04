@@ -7,6 +7,7 @@ Simply add the following line to your projects Packages/magifest.json file
 "com.henningboat/thshader": "https://github.com/henningboat/thshader.git,
 
 # example
+```
 ShaderModel Lit
 
 Property Texture _Texture
@@ -25,5 +26,5 @@ float2 uv
 
 FragmentShader
 output.albedo = tex2D(_Texture, input.uv);
-
 ENDCG
+```
