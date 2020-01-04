@@ -7,7 +7,7 @@ namespace THUtils.THShader.Keywords
 	{
 		#region Protected Fields
 
-		private string _parsedCode;
+		protected string _parsedCode;
 
 		#endregion
 

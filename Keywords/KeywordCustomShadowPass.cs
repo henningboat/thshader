@@ -3,24 +3,17 @@ using System.Collections.Generic;
 namespace THUtils.THShader.Keywords
 {
 	//todo allow explicitly disabling passes
-	internal class KeywordCustomShadowPass : KeywordShaderModel
+	internal class KeywordCustomShadowPass : SingletonKeyword
 	{
+		#region Public Fields
+
+		public readonly bool CustomShadowPass;
+
+		#endregion
+
 		#region Properties
 
-		public bool CustomShadowPass
-		{
-			get
-			{
-				if (IsDefault)
-				{
-					return false;
-				}
-				else
-				{
-					return FirstLineArguments == "True";
-				}
-			}
-		}
+		public override string DefaultLineArguments => "False";
 
 		#endregion
 
@@ -28,6 +21,7 @@ namespace THUtils.THShader.Keywords
 
 		public KeywordCustomShadowPass(Queue<string> sourceCode) : base(sourceCode)
 		{
+			CustomShadowPass = bool.Parse(FirstLineArguments.ToLower());
 		}
 
 		#endregion

@@ -6,6 +6,12 @@ namespace THUtils.THShader.Keywords
 {
 	internal class KeywordVertexShader : KeywordShaderCode
 	{
+		#region Properties
+
+		public bool ModifiesVertexPosition { get; private set; }
+
+		#endregion
+
 		#region Constructors
 
 		public KeywordVertexShader(Queue<string> sourceCode) : base(sourceCode)
@@ -40,6 +46,16 @@ namespace THUtils.THShader.Keywords
 
 			context.WriteLine("	return output;");
 			context.WriteLine("}");
+		}
+
+		#endregion
+
+		#region Protected methods
+
+		protected override void HandleMultiLineKeyword(Queue<string> lines)
+		{
+			base.HandleMultiLineKeyword(lines);
+			ModifiesVertexPosition = _parsedCode.Contains("SET_VERTEX_POSITION");
 		}
 
 		#endregion

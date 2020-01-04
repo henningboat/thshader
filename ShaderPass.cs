@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using THUtils.THShader.Keywords;
 using THUtils.THShader.Passes;
 
@@ -63,11 +62,6 @@ namespace THUtils.THShader
 
 		#region Public methods
 
-		private string GetShaderHeader()
-		{
-			return ReadSourceFile(_context, ShaderHeaderPath);
-		}
-
 		public string GetFragmentShaderHeader()
 		{
 			return ReadSourceFile(_context, FragmentShaderHeaderPath);
@@ -91,6 +85,11 @@ namespace THUtils.THShader
 		#endregion
 
 		#region Private methods
+
+		private string GetShaderHeader()
+		{
+			return ReadSourceFile(_context, ShaderHeaderPath);
+		}
 
 		private void WriteInnerPass(ShaderGenerationContext context)
 		{
@@ -116,13 +115,9 @@ namespace THUtils.THShader
 			context.WriteLine("ENDHLSL");
 		}
 
-		private bool ShouldWriteUsePassInstead(ShaderGenerationContext context)
+		private bool NeedsCustomShadowPass(ShaderGenerationContext context)
 		{
-			return context.KeywordMap.GetKeyword<KeywordCustomShadowPass>().CustomShadowPass;
-
-			bool hasUserDefinedVertexPosition = context.KeywordMap.GetKeyword<KeywordVertexInput>().GetAttributes().Any(config => config.AttributeType == AttributeType.Position && config.UserDefined);
-
-			return !(hasUserDefinedVertexPosition);
+			return context.KeywordMap.GetKeyword<KeywordCustomShadowPass>().CustomShadowPass || context.KeywordMap.GetKeyword<KeywordVertexShader>().ModifiesVertexPosition;
 		}
 
 		#endregion
@@ -133,7 +128,7 @@ namespace THUtils.THShader
 		{
 			if (UsePassName != null)
 			{
-				if (ShouldWriteUsePassInstead(context))
+				if (!NeedsCustomShadowPass(context))
 				{
 					new UsePass(UsePassName).WritePass(context, config);
 					return;
