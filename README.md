@@ -25,4 +25,5 @@ float2 uv
 
 FragmentShader
 output.albedo = tex2D(_Texture, input.uv);
+
 ENDCG
