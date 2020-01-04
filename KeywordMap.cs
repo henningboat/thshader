@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Sirenix.Utilities;
 using THUtils.THShader.Keywords;
 using UnityEditor;
 
@@ -76,7 +75,7 @@ namespace THUtils.THShader
 		private void ParseKeyword(Queue<string> sourceLines, List<Type> keywordTypes)
 		{
 			string[] lineComponents = ShaderGenerator.SplitLine(sourceLines.Peek());
-			if (lineComponents.Length == 0 || lineComponents[0].IsNullOrWhitespace())
+			if (lineComponents.Length == 0 || lineComponents[0] == "")
 			{
 				sourceLines.Dequeue();
 				return;

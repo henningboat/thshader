@@ -13,7 +13,7 @@ namespace THUtils.THShader.Passes
 		public override List<AttributeConfig> RequiredFragmentAttributes =>
 			new List<AttributeConfig>()
 			{
-				new AttributeConfig(AttributeType.Anonymous, DataType.@float, 4, "texcoord0"),
+				new AttributeConfig(AttributeType.TexCoord0, DataType.@float, 2, "texcoord0"),
 				new AttributeConfig(AttributeType.Anonymous, DataType.@float, 3, "positionWS"),
 				new AttributeConfig(AttributeType.Anonymous, DataType.@float, 4, "normalWS"),
 				new AttributeConfig(AttributeType.Anonymous, DataType.@float, 4, "tangentWS"),

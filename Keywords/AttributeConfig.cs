@@ -6,7 +6,7 @@ namespace THUtils.THShader.Keywords
 
 		public static bool operator ==(AttributeConfig a, AttributeConfig b)
 		{
-			return a.DataType == b.DataType && a.Name == b.Name && a.AttributeType == b.AttributeType;
+			return a.DataType == b.DataType && a.Name == b.Name && a.AttributeType == b.AttributeType && a.Dimensions==b.Dimensions;
 		}
 
 		public static bool operator !=(AttributeConfig a, AttributeConfig b)

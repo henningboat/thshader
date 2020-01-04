@@ -7,7 +7,7 @@ namespace THUtils.THShader.Passes
 	{
 		#region Properties
 
-		public abstract List<ShaderProperty> DefinedShaderProperties { get; }
+		public virtual List<ShaderModelTexture> OptionalShaderModelTextures => new List<ShaderModelTexture>(0);
 		public virtual string SubShaderHeader => null;
 
 		#endregion
@@ -31,9 +31,15 @@ namespace THUtils.THShader.Passes
 
 			context.WriteLine("HLSLINCLUDE");
 			context.WriteLine("#include \"Packages/com.henningboat.thshader/ShaderLibrary/Common.cginc\"");
-			context.WriteLine("ENDHLSL");
 
+			foreach (ShaderModelTexture modelTexture in OptionalShaderModelTextures)
+			{
+				modelTexture.Write(context);
+			}
 			context.WriteLine(ShaderPass.ReadSourceFile(context, SubShaderHeader));
+
+            context.WriteLine("ENDHLSL");
+
 
 			foreach (ShaderPass pass in GeneratePasses(context))
 			{
@@ -43,6 +49,4 @@ namespace THUtils.THShader.Passes
 
 		#endregion
 	}
-
-	//todo add datatype
 }

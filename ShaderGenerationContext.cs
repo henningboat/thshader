@@ -11,7 +11,7 @@ namespace THUtils.THShader
 
 		public readonly KeywordMap KeywordMap;
 		public ShaderPass CurrentPass;
-		public ShaderModel CurrentPassConfig;
+		public ShaderModel CurrentShaderModel;
 
 		#endregion
 
@@ -92,7 +92,7 @@ namespace THUtils.THShader
 			       {
 				       _indentCount = parent._indentCount,
 				       CurrentPass = pass,
-				       CurrentPassConfig = config,
+				       CurrentShaderModel = config,
 			       };
 		}
 

@@ -7,8 +7,6 @@ namespace THUtils.THShader.Passes
 	{
 		#region Properties
 
-		public override List<ShaderProperty> DefinedShaderProperties => new List<ShaderProperty>();
-
 		#endregion
 
 		#region Public methods

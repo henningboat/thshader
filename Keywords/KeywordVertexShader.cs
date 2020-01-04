@@ -36,7 +36,9 @@ namespace THUtils.THShader.Keywords
 
 			context.WriteLine("VertexPositionInputs __vertexPositionInputs = GetVertexPositionInputs(input.__ATTRIBUTESPOSITION);");
 
-			context.WriteLine(context.CurrentPass.GetVertexShaderHeader());
+			InitializeVaryingsWithDefaultValues(context);
+			
+            context.WriteLine(context.CurrentPass.GetVertexShaderHeader());
 
 			base.Write(context);
 
@@ -62,7 +64,7 @@ namespace THUtils.THShader.Keywords
 
 		#region Private methods
 
-		private void WriteDefaultCode(ShaderGenerationContext context)
+		private void InitializeVaryingsWithDefaultValues(ShaderGenerationContext context)
 		{
 			var vertexInput = context.KeywordMap.GetKeyword<KeywordVertexInput>();
 			var fragmentInput = context.KeywordMap.GetKeyword<KeywordFragmentInput>();
@@ -75,16 +77,10 @@ namespace THUtils.THShader.Keywords
 
 			foreach (var fragmentAttribute in fragmentInput.GetAttributes())
 			{
-				if (!fragmentAttribute.UserDefined)
+				if (fragmentAttribute.AttributeType == AttributeType.Anonymous || fragmentAttribute.AttributeType == AttributeType.Position)
 					continue;
-				if (hasDefinedFragmentShader)
-				{
-					if (vertexAttributes.Any(vertexAttribute => fragmentAttribute == vertexAttribute))
-					{
-						attributesToInit.Add(fragmentAttribute);
-					}
-				}
-				else
+
+				if (vertexAttributes.Any(vertexAttribute => fragmentAttribute == vertexAttribute))
 				{
 					attributesToInit.Add(fragmentAttribute);
 				}
@@ -92,7 +88,7 @@ namespace THUtils.THShader.Keywords
 
 			foreach (AttributeConfig config in attributesToInit)
 			{
-				context.WriteLineIndented($"o.{config.Name} = v.{config.Name};");
+				context.WriteLineIndented($"output.__VARYINGS{config.AttributeType.ToString().ToUpper()} = input.__ATTRIBUTES{config.AttributeType.ToString().ToUpper()};");
 			}
 		}
 

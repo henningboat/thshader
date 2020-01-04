@@ -1,2 +1,2 @@
 SurfaceData output;
-InitializeStandardLitSurfaceData(input.__VARYINGSTEXCOORD0, output);
+InitializeLitSurfaceData(input.__VARYINGSTEXCOORD0, output);

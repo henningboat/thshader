@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace THUtils.THShader.Passes
 {
@@ -7,11 +8,11 @@ namespace THUtils.THShader.Passes
 	{
 		#region Properties
 
-		public override List<ShaderProperty> DefinedShaderProperties => new List<ShaderProperty>()
-		                                                                {
-			                                                                new ShaderProperty("_BaseMap"),
-			                                                                new ShaderProperty("_BumpMap"),
-		                                                                };
+		public override List<ShaderModelTexture> OptionalShaderModelTextures => new List<ShaderModelTexture>()
+		                                                                        {
+			                                                                        new ShaderModelTexture("_BaseMap", Vector4.one),
+			                                                                        new ShaderModelTexture("_BumpMap", new Vector4(0, 1, 0)),
+		                                                                        };
 
 		public override string SubShaderHeader => "ShaderLibrary/LitHeader.cginc";
 
