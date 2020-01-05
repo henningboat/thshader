@@ -26,6 +26,7 @@ namespace THUtils.THShader
 				string combine = Path.GetFullPath(Path.Combine("Packages/com.henningboat.thshader", path));
 				try
 				{
+					context.LogShaderSection($"Imported include file: {Path.GetFileName(path)}");
 					return File.ReadAllText(combine);
 				}
 				catch (Exception e)
@@ -133,6 +134,8 @@ namespace THUtils.THShader
 					return;
 				}
 			}
+
+			context.LogShaderSection($"Shader Pass {GetType().Name}");
 
 			context.WriteLine("Pass{");
 

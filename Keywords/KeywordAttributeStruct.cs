@@ -41,6 +41,8 @@ namespace THUtils.THShader.Keywords
 			AddPassRequiredAttributes(GetRequiredPassAttributes(context));
 			AddPassKeywords(GetRequiredPassKeywords(context));
 
+			context.LogShaderSection($"Generated Data Struct {AttributeStructName}");
+
 			context.WriteLine($"struct {AttributeStructName}");
 			context.WriteLine("{");
 

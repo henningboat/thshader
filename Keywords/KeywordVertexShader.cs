@@ -26,19 +26,23 @@ namespace THUtils.THShader.Keywords
 		{
 			context.WriteLine("#define UNITY_SHADER_NO_UPGRADE 1");
 
-			var vertexInput = context.KeywordMap.GetKeyword<KeywordVertexInput>();
-			var fragmentInput = context.KeywordMap.GetKeyword<KeywordFragmentInput>();
+			context.LogShaderSection("Vertex Shader");
 
-			context.Newine();
+			context.WriteIndented(WriteInnerVertexShader);
 
+			context.WriteLine("}");
+		}
+
+		private void WriteInnerVertexShader(ShaderGenerationContext context)
+		{
 			context.WriteLine("Varyings vert(Attributes input){");
 			context.WriteLine("	Varyings output = (Varyings)0;");
 
 			context.WriteLine("VertexPositionInputs __vertexPositionInputs = GetVertexPositionInputs(input.__ATTRIBUTESPOSITION);");
 
 			InitializeVaryingsWithDefaultValues(context);
-			
-            context.WriteLine(context.CurrentPass.GetVertexShaderHeader());
+
+			context.WriteLine(context.CurrentPass.GetVertexShaderHeader());
 
 			base.Write(context);
 
@@ -47,7 +51,6 @@ namespace THUtils.THShader.Keywords
 			context.WriteLine("output.__VARYINGSPOSITION = __vertexPositionInputs.positionCS;");
 
 			context.WriteLine("	return output;");
-			context.WriteLine("}");
 		}
 
 		#endregion
@@ -79,7 +82,7 @@ namespace THUtils.THShader.Keywords
 			{
 				if (fragmentAttribute.AttributeType == AttributeType.Anonymous || fragmentAttribute.AttributeType == AttributeType.Position)
 					continue;
-				
+
 				if (vertexAttributes.Any(vertexAttribute => fragmentAttribute == vertexAttribute))
 				{
 					attributesToInit.Add(fragmentAttribute);

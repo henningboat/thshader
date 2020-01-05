@@ -20,6 +20,7 @@ namespace THUtils.THShader
 		private readonly StringBuilder _stringBuilder;
 		private int _indentCount;
 		private IReadOnlyList<string> _keymapSource;
+		private string _currentSection;
 
 		#endregion
 
@@ -46,11 +47,31 @@ namespace THUtils.THShader
 			WriteLine($"//{log}");
 		}
 
+		public void LogShaderSection(string sectionName)
+		{
+			_currentSection = sectionName;
+			_stringBuilder.Append($"{Environment.NewLine}{Environment.NewLine}//");
+
+			float spaceCount = _indentCount * 4 - 2;
+
+			for (int i = 0; i < spaceCount; i++)
+			{
+				_stringBuilder.Append("-");
+			}
+
+			_stringBuilder.Append(sectionName);
+
+			for (int i = 0; i < 80 - spaceCount - sectionName.Length; i++)
+			{
+				_stringBuilder.Append("-");
+			}
+		}
+
 		public void WriteLine(string text)
 		{
 			if (text == null)
 				return;
-			
+
 			var lines = text.Split(new string[] { "\n", "\r\n" }, StringSplitOptions.None);
 			foreach (string line in lines)
 			{
@@ -69,7 +90,7 @@ namespace THUtils.THShader
 			if (text == null)
 				return;
 
-            _stringBuilder.Append(text);
+			_stringBuilder.Append(text);
 		}
 
 		public void WriteIndented(Action<ShaderGenerationContext> action)

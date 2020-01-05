@@ -16,9 +16,8 @@ namespace THUtils.THShader.Keywords
 
 		public override void Write(ShaderGenerationContext context)
 		{
-			var vertexInput = context.KeywordMap.GetKeyword<KeywordVertexInput>();
-			var fragmentInput = context.KeywordMap.GetKeyword<KeywordFragmentInput>();
-			
+			context.LogShaderSection("Fragment Shader");
+
 			//todo it migh be more performant to only output a float3 for opaque shaders
 			context.WriteLine("float4 frag(Varyings input) : COLOR{");
 
