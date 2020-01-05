@@ -15,9 +15,9 @@ namespace THUtils.THShader.Passes
 			{
 				new AttributeConfig(AttributeType.TexCoord0, DataType.@float, 2, "texcoord0"),
 				new AttributeConfig(AttributeType.Anonymous, DataType.@float, 3, "positionWS"),
-				new AttributeConfig(AttributeType.Anonymous, DataType.@float, 4, "normalWS"),
-				new AttributeConfig(AttributeType.Anonymous, DataType.@float, 4, "tangentWS"),
-				new AttributeConfig(AttributeType.Anonymous, DataType.@float, 4, "bitangentWS"),
+				new AttributeConfig(AttributeType.Anonymous, DataType.@float, 3, "normalWS"),
+				new AttributeConfig(AttributeType.Anonymous, DataType.@float, 3, "tangentWS"),
+				new AttributeConfig(AttributeType.Anonymous, DataType.@float, 3, "bitangentWS"),
 				new AttributeConfig(AttributeType.Anonymous, DataType.@float, 4, "fogFactorAndVertexLight"),
 				new AttributeConfig(AttributeType.Anonymous, DataType.@float, 4, "shadowCoord"),
 				new AttributeConfig(AttributeType.Anonymous, DataType.@float, 3, "viewDirWS"),
