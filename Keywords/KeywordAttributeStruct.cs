@@ -172,14 +172,7 @@ namespace THUtils.THShader.Keywords
 					else
 					{
 						AttributeConfig existingAttribute = _attributes.First(config => config.AttributeType == requiredAttribute.AttributeType);
-						if (existingAttribute.DataType == requiredAttribute.DataType && existingAttribute.Dimensions == requiredAttribute.Dimensions)
-						{
-							if (existingAttribute.Name != requiredAttribute.Name)
-							{
-								needsToBeAdded = true;
-							}
-						}
-						else
+						if (existingAttribute.DataType != requiredAttribute.DataType || existingAttribute.Dimensions != requiredAttribute.Dimensions)
 						{
 							throw new KeywordMap.ShaderGenerationException($"Attribute {existingAttribute.Name} of type {existingAttribute.AttributeType} needs to be a {requiredAttribute.DataType} ({requiredAttribute.Dimensions}) in this shader model");
 						}

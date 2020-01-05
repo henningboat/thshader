@@ -39,28 +39,3 @@ void InitializeInputData(Varyings input, half3 normalTS, out InputData inputData
 	inputData.vertexLighting = input.fogFactorAndVertexLight.yzw;
 	inputData.bakedGI = SAMPLE_GI(input.lightmapUV, input.vertexSH, inputData.normalWS);
 }
-
-half3 SampleNormalFromDefaultBumpMap(float2 uv, half scale = 1.0h)
-{
-#if __HASETEXTURE_BUMPMAP
-	half4 n = __SAMPLETEXTURE_BUMPMAP(uv);
-	return UnpackNormal(n);
-#else
-	return half3(0, 0, 1);
-#endif
-}
-
-void InitializeLitSurfaceData(float2 uv, out SurfaceData outSurfaceData) {
-	half4 albedoAlpha = __SAMPLETEXTURE_BASEMAP(uv);
-	outSurfaceData.alpha = albedoAlpha.a;
-
-	outSurfaceData.albedo = albedoAlpha.rgb;
-
-	outSurfaceData.metallic = 0;
-	outSurfaceData.specular = 0;
-	outSurfaceData.smoothness = 0.5;
-	//outSurfaceData.normalTS = SampleNormal(uv, TEXTURE2D_ARGS(_BumpMap, sampler_BumpMap), _BumpScale);
-	outSurfaceData.normalTS = SampleNormalFromDefaultBumpMap(uv);
-	outSurfaceData.occlusion = 1;
-	outSurfaceData.emission = 0;
-}

@@ -65,10 +65,12 @@ namespace THUtils.THShader.Keywords
 
 			foreach (AttributeConfig fragmentAttribute in fragmentAttributes)
 			{
-				if (fragmentAttribute.AttributeType == AttributeType.Anonymous)
+				if (fragmentAttribute.AttributeType == AttributeType.Anonymous || fragmentAttribute.AttributeType == AttributeType.Position)
 				{
 					continue;
 				}
+
+				_attributes.Add(fragmentAttribute);
 			}
 		}
 

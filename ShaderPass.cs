@@ -101,7 +101,6 @@ namespace THUtils.THShader
 			context.WriteLine("#pragma vertex vert");
 			context.WriteLine("#pragma fragment frag");
 
-			context.KeywordMap.GetMultiKeywords<KeywordProperty>().ForEach(keyword => keyword.Write(context, false));
 			context.KeywordMap.GetMultiKeywords<KeywordCodeBlock>().ForEach(block => block.Write(context));
 
 			context.KeywordMap.GetKeyword<KeywordVertexInput>().Write(context);

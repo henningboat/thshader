@@ -79,7 +79,7 @@ namespace THUtils.THShader.Keywords
 			{
 				if (fragmentAttribute.AttributeType == AttributeType.Anonymous || fragmentAttribute.AttributeType == AttributeType.Position)
 					continue;
-
+				
 				if (vertexAttributes.Any(vertexAttribute => fragmentAttribute == vertexAttribute))
 				{
 					attributesToInit.Add(fragmentAttribute);

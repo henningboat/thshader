@@ -13,6 +13,7 @@ namespace THUtils.THShader.Passes
 		public override List<AttributeConfig> RequiredFragmentAttributes => new List<AttributeConfig>()
 		                                                                    {
 			                                                                    new AttributeConfig(AttributeType.Position, DataType.@float, 4, "vertex"),
+			                                                                    new AttributeConfig(AttributeType.TexCoord0, DataType.@float, 2, "texcoord0"),
 		                                                                    };
 
 		public override List<string> RequiredFragmentKeywords => new List<string>();
@@ -21,6 +22,7 @@ namespace THUtils.THShader.Passes
 		                                                                  {
 			                                                                  new AttributeConfig(AttributeType.Position, DataType.@float, 4, "vertex"),
 			                                                                  new AttributeConfig(AttributeType.Normal, DataType.@float, 3, "normal"),
+			                                                                  new AttributeConfig(AttributeType.TexCoord0, DataType.@float, 2, "texcoord0"),
 			                                                                  new AttributeConfig(AttributeType.TexCoord1, DataType.@float, 4, "texcoord1"),
 			                                                                  new AttributeConfig(AttributeType.TexCoord2, DataType.@float, 4, "texcoord2"),
 		                                                                  };

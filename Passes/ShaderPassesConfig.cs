@@ -36,10 +36,12 @@ namespace THUtils.THShader.Passes
 			{
 				modelTexture.Write(context);
 			}
+
+			context.KeywordMap.GetMultiKeywords<KeywordProperty>().ForEach(keyword => keyword.Write(context, false));
+
 			context.WriteLine(ShaderPass.ReadSourceFile(context, SubShaderHeader));
 
-            context.WriteLine("ENDHLSL");
-
+			context.WriteLine("ENDHLSL");
 
 			foreach (ShaderPass pass in GeneratePasses(context))
 			{
