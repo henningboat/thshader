@@ -23,7 +23,7 @@ namespace THUtils.THShader.Passes
 		public void Write(ShaderGenerationContext context)
 		{
 			context.WriteLine($"#define __SAMPLETEXTURE{Name.ToUpper()}(uv) ");
-			if (KeywordProperty.HasProperty(context, PropertyType.Texture2D, Name))
+			if (KeywordProperty.HasProperty(context, PropertyType.Texture, Name))
 			{
 				context.Write($"tex2D({Name}, uv)");
 				context.WriteLine($"#define __HASETEXTURE{Name.ToUpper()} True");

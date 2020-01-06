@@ -47,6 +47,7 @@ namespace THUtils.THShader.Keywords
 
 		public virtual void Write(ShaderGenerationContext context)
 		{
+			context.LogShaderSection("User Code Block");
 			context.WriteLine(_parsedCode);
 		}
 
