@@ -7,6 +7,7 @@ namespace THUtils.THShader
 	{
 		#region Properties
 
+		public override bool IsMainPass => true;
 		protected override string LibraryBaseName => "ShaderLibrary/Unlit";
 		public override string LightMode => null;
 

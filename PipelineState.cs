@@ -10,9 +10,15 @@ namespace THUtils.THShader
 		{
 			List<PipelineStateKeyword> keywords = context.KeywordMap.GetKeywords<PipelineStateKeyword>();
 
-			if (context.CurrentPass != null && context.CurrentPass.LightMode != null)
+			string lightMode = context.CurrentPass.LightMode;
+			KeywordLightMode keywordLightMode = context.KeywordMap.GetKeyword<KeywordLightMode>();
+			if (context.CurrentPass.IsMainPass && keywordLightMode.OverwriteLightMode!=null)
 			{
-				context.WriteLine($"Tags{{\"LightMode\" = \"{context.CurrentPass.LightMode}\"}}");
+				lightMode = keywordLightMode.OverwriteLightMode;
+			}
+			if (context.CurrentPass != null && lightMode != null)
+			{
+				context.WriteLine($"Tags{{\"LightMode\" = \"{lightMode}\"}}");
 			}
 
 			foreach (PipelineStateKeyword keyword in keywords)

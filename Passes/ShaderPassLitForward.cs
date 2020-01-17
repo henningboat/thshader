@@ -7,6 +7,7 @@ namespace THUtils.THShader.Passes
 	{
 		#region Properties
 
+		public override bool IsMainPass => true;
 		protected override string LibraryBaseName => "ShaderLibrary/LitForward";
 		public override string LightMode => "UniversalForward";
 

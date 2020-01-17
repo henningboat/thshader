@@ -8,6 +8,7 @@ namespace THUtils.THShader
 		#region Properties
 
 		public override string DefaultLineArguments => "";
+		public string OverwriteLightMode => IsDefault ? null : FirstLineArguments;
 
 		#endregion
 
@@ -15,18 +16,6 @@ namespace THUtils.THShader
 
 		public KeywordLightMode(Queue<string> sourceCode) : base(sourceCode)
 		{
-		}
-
-		#endregion
-
-		#region Public methods
-
-		public void Write(ShaderGenerationContext context)
-		{
-			if (!IsDefault)
-			{
-				context.WriteLineIndented($"Tags{{\"LightMode\"=\"{FirstLineArguments}\" }}");
-			}
 		}
 
 		#endregion

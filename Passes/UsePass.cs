@@ -15,6 +15,7 @@ namespace THUtils.THShader.Passes
 
 		protected override string FragmentShaderFooterPath { get; }
 		protected override string FragmentShaderHeaderPath { get; }
+		public override bool IsMainPass => false;
 		protected override string LibraryBaseName { get; }
 		public override string LightMode { get; }
 		public override List<AttributeConfig> RequiredFragmentAttributes { get; }

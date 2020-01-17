@@ -7,6 +7,7 @@ namespace THUtils.THShader.Passes
 	{
 		#region Properties
 
+		public override bool IsMainPass => false;
 		protected override string LibraryBaseName => "ShaderLibrary/DepthOnly";
 		public override string LightMode => "DepthOnly";
 
