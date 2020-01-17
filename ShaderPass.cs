@@ -98,6 +98,8 @@ namespace THUtils.THShader
 			var pipelineState = new PipelineState();
 			pipelineState.Generate(context);
 
+			context.KeywordMap.GetKeyword<KeywordLightMode>().Write(context);
+
 			context.WriteLine("HLSLPROGRAM");
 			context.WriteLine("#pragma vertex vert");
 			context.WriteLine("#pragma fragment frag");
