@@ -8,7 +8,7 @@ output.tangentWS = normalInput.tangentWS;
 output.bitangentWS = normalInput.bitangentWS;
 output.viewDirWS = __viewDirWS;
 
-OUTPUT_LIGHTMAP_UV(input.lightmapUV, unity_LightmapST, output.lightmapUV);
+OUTPUT_LIGHTMAP_UV(input.__ATTRIBUTESTEXCOORD1, unity_LightmapST, output.lightmapUV);
 OUTPUT_SH(output.normalWS.xyz, output.vertexSH);
 
 output.fogFactorAndVertexLight = half4(fogFactor, __vertexLight);
