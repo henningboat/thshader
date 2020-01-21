@@ -88,14 +88,14 @@ Shader ""Hidden/THShaderErrorShader2""
 			}
 			catch (Exception e)
 			{
-				Debug.LogError(e);
+				Debug.LogWarning(e);
 				if (context != null)
 				{
 					GeneratedShader += context.BuildString();
 				}
 				GeneratedShader += "\n #error";
 				GeneratedShader += e;
-				Debug.LogError("Failed to import thshader");
+				Debug.LogWarning("Failed to import thshader");
 			}
 		}
 
