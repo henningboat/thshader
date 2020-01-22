@@ -6,4 +6,4 @@ __metaInput.Albedo = __brdfData.diffuse + __brdfData.specular * __brdfData.rough
 __metaInput.SpecularColor = output.specular;
 __metaInput.Emission = output.emission;
 
-return MetaFragment(__metaInput);
+float4 __color = MetaFragment(__metaInput);

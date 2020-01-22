@@ -13,9 +13,10 @@ OUTPUT_SH(output.normalWS.xyz, output.vertexSH);
 
 output.fogFactorAndVertexLight = half4(fogFactor, __vertexLight);
 
-#ifdef _ADDITIONAL_LIGHTS
+//todo find universal system to determine if we need the world position, either because of user or template code
+//#ifdef _ADDITIONAL_LIGHTS
 output.positionWS = __vertexPositionInputs.positionWS;
-#endif
+//#endif
 
 #if defined(_MAIN_LIGHT_SHADOWS) && !defined(_RECEIVE_SHADOWS_OFF)
 output.shadowCoord = GetShadowCoord(__vertexPositionInputs);

@@ -1,1 +1,1 @@
-return output.color;
+float4 __color = output.color;

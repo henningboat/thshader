@@ -27,6 +27,10 @@ namespace THUtils.THShader.Keywords
 
 			context.WriteIndented(WriteFragmentShaderFooter);
 
+			context.KeywordMap.GetKeyword<KeywordModifyFinalColor>().Write(context);
+
+			context.WriteLineIndented("return __color;");
+
 			context.WriteLine("}");
 		}
 
