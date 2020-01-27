@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace THUtils.THShader
 {
-	[ScriptedImporter(1, "thshader")]
+	[ScriptedImporter(2, "thshader")]
 	public class THShaderImporter : ScriptedImporter
 	{
 		#region Public methods
