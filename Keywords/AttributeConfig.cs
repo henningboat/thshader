@@ -74,7 +74,7 @@ namespace THUtils.THShader.Keywords
 				}
 				else
 				{
-					context.Write(AttributeType.ToString());
+					context.Write(AttributeType.ToString().ToUpper());
 				}
 			}
 
