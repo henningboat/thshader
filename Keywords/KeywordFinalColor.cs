@@ -44,7 +44,7 @@ namespace THUtils.THShader.Keywords
 
 		public virtual void Write(ShaderGenerationContext context)
 		{
-			if (IsDefault)
+			if (IsDefault || !context.CurrentPass.IsMainPass)
 				return;
 			context.LogShaderSection("FinalColor Code Block");
 			context.WriteLine("float4 finalColor = __color;");
