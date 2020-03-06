@@ -8,7 +8,7 @@ namespace THUtils.THShader.Passes
 		#region Properties
 
 		public override bool IsMainPass => true;
-		protected override string LibraryBaseName => "ShaderLibrary/LitForward";
+		protected override string LibraryBaseName => "Packages/com.henningboat.thshader/ShaderLibrary/LitForward";
 		public override string LightMode => "UniversalForward";
 
 		public override List<AttributeConfig> RequiredFragmentAttributes =>

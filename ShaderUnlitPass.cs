@@ -8,7 +8,7 @@ namespace THUtils.THShader
 		#region Properties
 
 		public override bool IsMainPass => true;
-		protected override string LibraryBaseName => "ShaderLibrary/Unlit";
+		protected override string LibraryBaseName => "Packages/com.henningboat.thshader/ShaderLibrary/Unlit";
 		public override string LightMode => null;
 
 		public override List<AttributeConfig> RequiredFragmentAttributes =>

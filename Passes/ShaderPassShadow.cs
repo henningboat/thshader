@@ -8,7 +8,7 @@ namespace THUtils.THShader.Passes
 		#region Properties
 
 		public override bool IsMainPass => false;
-		protected override string LibraryBaseName => "ShaderLibrary/Shadow";
+		protected override string LibraryBaseName => "Packages/com.henningboat.thshader/ShaderLibrary/Shadow";
 		public override string LightMode => "ShadowCaster";
 
 		public override List<AttributeConfig> RequiredFragmentAttributes => new List<AttributeConfig>()

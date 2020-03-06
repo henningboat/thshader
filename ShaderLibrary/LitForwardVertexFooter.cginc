@@ -21,3 +21,5 @@ output.positionWS = __vertexPositionInputs.positionWS;
 #if defined(_MAIN_LIGHT_SHADOWS) && !defined(_RECEIVE_SHADOWS_OFF)
 output.shadowCoord = GetShadowCoord(__vertexPositionInputs);
 #endif
+
+AIHITGI_PERVERTEX

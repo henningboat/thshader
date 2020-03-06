@@ -8,8 +8,8 @@
 #pragma multi_compile _ _SHADOWS_SOFT
 #pragma multi_compile _ _MIXED_LIGHTING_SUBTRACTIVE
 
-#pragma multi_compile _ DIRLIGHTMAP_COMBINED
-#pragma multi_compile _ LIGHTMAP_ON
+#pragma multi_compile _ AIHIT_BAKED_GI
+#pragma multi_compile _ AIHIT_BUFFER_GI
 
 #pragma multi_compile_fog
 

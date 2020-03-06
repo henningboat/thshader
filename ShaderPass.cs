@@ -19,11 +19,11 @@ namespace THUtils.THShader
 
 			if (!context.KeywordMap.GetKeyword<KeywordDebugMode>().IsDebug)
 			{
-				return $"#include \"Packages/com.henningboat.thshader/{path}\"";
+				return $"#include \"{path}\"";
 			}
 			else
 			{
-				string combine = Path.GetFullPath(Path.Combine("Packages/com.henningboat.thshader", path));
+				string combine = Path.GetFullPath(path);
 				try
 				{
 					context.LogShaderSection($"Imported include file: {Path.GetFileName(path)}");

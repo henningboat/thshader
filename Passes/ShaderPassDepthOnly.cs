@@ -8,7 +8,7 @@ namespace THUtils.THShader.Passes
 		#region Properties
 
 		public override bool IsMainPass => false;
-		protected override string LibraryBaseName => "ShaderLibrary/DepthOnly";
+		protected override string LibraryBaseName => "Packages/com.henningboat.thshader/ShaderLibrary/DepthOnly";
 		public override string LightMode => "DepthOnly";
 
 		public override List<AttributeConfig> RequiredFragmentAttributes => new List<AttributeConfig>()
