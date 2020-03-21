@@ -62,6 +62,14 @@ namespace THUtils.THShader.Keywords
 					case PropertyType.Float:
 						context.WriteLine($"{_propertyName} (\"{_propertyName}\", Float) = {_defaultValue}");
 						break;
+					case PropertyType.Float2:
+					case PropertyType.Float3:
+					case PropertyType.Float4:
+						context.WriteLine($"{_propertyName} (\"{_propertyName}\", Vector) = {_defaultValue}");
+						break;
+					case PropertyType.Color:
+						context.WriteLine($"{_propertyName} (\"{_propertyName}\", Color) = {_defaultValue}");
+						break;
 					default:
 						throw new ArgumentOutOfRangeException();
 				}
@@ -75,6 +83,16 @@ namespace THUtils.THShader.Keywords
 						break;
 					case PropertyType.Float:
 						context.WriteLine($"float {_propertyName};");
+						break;
+					case PropertyType.Float2:
+						context.WriteLine($"float2 {_propertyName};");
+						break;
+					case PropertyType.Float3:
+						context.WriteLine($"float3 {_propertyName};");
+						break;
+					case PropertyType.Float4:
+					case PropertyType.Color:
+						context.WriteLine($"float4 {_propertyName};");
 						break;
 					default:
 						throw new ArgumentOutOfRangeException();
@@ -97,15 +115,22 @@ namespace THUtils.THShader.Keywords
 
 			_propertyType = (PropertyType) Enum.Parse(typeof(PropertyType), arguments[0]);
 			_propertyName = arguments[1];
-			if (arguments.Length == 3)
+			if (_propertyType == PropertyType.Float2 | _propertyType == PropertyType.Float3 | _propertyType == PropertyType.Float4 | _propertyType == PropertyType.Color)
 			{
-				_defaultValue = arguments[2];
-            }
+				_defaultValue = "(0,0,0,0)";
+			}
 			else
 			{
-				if (_propertyType == PropertyType.Float)
+				if (arguments.Length == 3)
 				{
-					_defaultValue = "0";
+					_defaultValue = arguments[2];
+				}
+				else
+				{
+					if (_propertyType == PropertyType.Float)
+					{
+						_defaultValue = "0";
+					}
 				}
 			}
 		}
@@ -117,5 +142,9 @@ namespace THUtils.THShader.Keywords
 	{
 		Texture,
 		Float,
+		Float2,
+		Float3,
+		Float4,
+		Color
 	}
 }
