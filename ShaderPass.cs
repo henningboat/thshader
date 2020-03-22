@@ -118,7 +118,15 @@ namespace THUtils.THShader
 
 		private bool NeedsCustomShadowPass(ShaderGenerationContext context)
 		{
-			return context.KeywordMap.GetKeyword<KeywordCustomShadowPass>().CustomShadowPass || context.KeywordMap.GetKeyword<KeywordVertexShader>().ModifiesVertexPosition;
+			KeywordCustomShadowPass customShadowPass = context.KeywordMap.GetKeyword<KeywordCustomShadowPass>();
+			if (customShadowPass.IsDefault)
+			{
+				return context.KeywordMap.GetKeyword<KeywordVertexShader>().ModifiesVertexPosition;
+			}
+			else
+			{
+				return customShadowPass.CustomShadowPass;
+			}
 		}
 
 		#endregion
