@@ -115,36 +115,48 @@ namespace THUtils.THShader.Keywords
 
 			_propertyType = (PropertyType) Enum.Parse(typeof(PropertyType), arguments[0]);
 			_propertyName = arguments[1];
-			if (_propertyType == PropertyType.Float2 | _propertyType == PropertyType.Float3 | _propertyType == PropertyType.Float4 | _propertyType == PropertyType.Color)
+
+			if (arguments.Length == 3)
 			{
-				_defaultValue = "(0,0,0,0)";
+				_defaultValue = arguments[2];
 			}
 			else
 			{
-				if (arguments.Length == 3)
+				switch (_propertyType)
 				{
-					_defaultValue = arguments[2];
-				}
-				else
-				{
-					if (_propertyType == PropertyType.Float)
-					{
+					case PropertyType.Texture:
+						_defaultValue = "";
+						break;
+					case PropertyType.Float:
 						_defaultValue = "0";
-					}
+						break;
+					case PropertyType.Float2:
+					case PropertyType.Float3:
+					case PropertyType.Float4:
+					case PropertyType.Color:
+						_defaultValue = "(0,0,0,0)";
+						break;
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
+
+				if (_propertyType == PropertyType.Float)
+				{
+					_defaultValue = "0";
 				}
 			}
 		}
 
 		#endregion
 	}
+}
 
-	public enum PropertyType
-	{
-		Texture,
-		Float,
-		Float2,
-		Float3,
-		Float4,
-		Color
-	}
+public enum PropertyType
+{
+	Texture,
+	Float,
+	Float2,
+	Float3,
+	Float4,
+	Color
 }
