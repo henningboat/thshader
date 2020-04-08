@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using THUtils.THShader.Keywords;
 
@@ -26,6 +27,7 @@ namespace THUtils.THShader.Passes
 
 		public void Write(ShaderGenerationContext context)
 		{
+			context.KeywordMap.GetKeyword<KeywordQueue>().Write(context);
 			//todo workaround for now
 			context.KeywordMap.GetKeyword<KeywordHasNormalMap>().Write(context);
 
