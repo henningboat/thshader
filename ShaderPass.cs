@@ -102,6 +102,7 @@ namespace THUtils.THShader
 			context.WriteLine("HLSLPROGRAM");
 			context.WriteLine("#pragma vertex vert");
 			context.WriteLine("#pragma fragment frag");
+			context.WriteLine($"#define {GetType().Name}");
 
 			context.KeywordMap.GetKeyword<KeywordVertexInput>().Write(context);
 			context.KeywordMap.GetKeyword<KeywordFragmentInput>().Write(context);
