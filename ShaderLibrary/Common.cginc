@@ -14,5 +14,19 @@ VertexPositionInputs GetVertexPositionInputsFromWS(float3 positionWS)
 	return input;
 }
 
+VertexNormalInputs GetVertexNormalInputsWS(float3 normalWS, float4 tangentWS)
+{
+    VertexNormalInputs tbn;
+
+    // mikkts space compliant. only normalize when extracting normal at frag.
+    real sign = tangentWS.w * GetOddNegativeScale();
+    tbn.normalWS =normalWS;
+    tbn.tangentWS = tangentWS.xyz;
+    tbn.bitangentWS = cross(tbn.normalWS, tbn.tangentWS) * sign;
+    return tbn;
+}
+
+
 #define SET_VERTEX_POSITION_WS(positionWS) __vertexPositionInputs = GetVertexPositionInputsFromWS(positionWS); 
 #define SET_VERTEX_POSITION_OS(positionOS) __vertexPositionInputs = GetVertexPositionInputs(positionOS);
+#define SET_NORMAL_TANGENT_WS(normalWS, tangentWS) __normalInput = GetVertexNormalInputsWS(normalWS,tangentWS);
