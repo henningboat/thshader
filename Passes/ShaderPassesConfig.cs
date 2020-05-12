@@ -32,6 +32,7 @@ namespace THUtils.THShader.Passes
 			context.KeywordMap.GetKeyword<KeywordHasNormalMap>().Write(context);
 
 			context.WriteLine("HLSLINCLUDE");
+			
 			context.WriteLine("#include \"Packages/com.henningboat.thshader/ShaderLibrary/Common.cginc\"");
 
 			foreach (ShaderModelTexture modelTexture in OptionalShaderModelTextures)
@@ -39,6 +40,7 @@ namespace THUtils.THShader.Passes
 				modelTexture.Write(context);
 			}
 
+			context.KeywordMap.GetMultiKeywords<KeywordDefine>().ForEach(keyword => keyword.Write(context));
 			context.KeywordMap.GetMultiKeywords<KeywordProperty>().ForEach(keyword => keyword.Write(context, false));
 
 			context.WriteLine(ShaderPass.ReadSourceFile(context, SubShaderHeader));
