@@ -117,16 +117,16 @@ namespace THUtils.THShader
 			context.WriteLine("ENDHLSL");
 		}
 
-		private bool NeedsCustomShadowPass(ShaderGenerationContext context)
+		private KeywordShadowDepthPass.ShadowDepthPassMode GetShadowDepthMode(ShaderGenerationContext context)
 		{
-			KeywordCustomShadowPass customShadowPass = context.KeywordMap.GetKeyword<KeywordCustomShadowPass>();
-			if (customShadowPass.IsDefault)
+			KeywordShadowDepthPass shadowDepthPass = context.KeywordMap.GetKeyword<KeywordShadowDepthPass>();
+			if (shadowDepthPass.Mode == KeywordShadowDepthPass.ShadowDepthPassMode.DefaultPass)
 			{
-				return context.KeywordMap.GetKeyword<KeywordVertexShader>().ModifiesVertexPosition;
+				return context.KeywordMap.GetKeyword<KeywordVertexShader>().ModifiesVertexPosition ? KeywordShadowDepthPass.ShadowDepthPassMode.On : KeywordShadowDepthPass.ShadowDepthPassMode.DefaultPass;
 			}
 			else
 			{
-				return customShadowPass.CustomShadowPass;
+				return shadowDepthPass.Mode;
 			}
 		}
 
@@ -136,11 +136,17 @@ namespace THUtils.THShader
 
 		internal virtual void WritePass(ShaderGenerationContext context, ShaderModel config)
 		{
+			var mode = GetShadowDepthMode(context);
 			if (UsePassName != null)
 			{
-				if (!NeedsCustomShadowPass(context))
+				if (mode == KeywordShadowDepthPass.ShadowDepthPassMode.DefaultPass)
 				{
 					new UsePass(UsePassName).WritePass(context, config);
+					return;
+				}
+
+				if (mode == KeywordShadowDepthPass.ShadowDepthPassMode.Off)
+				{
 					return;
 				}
 			}
