@@ -100,6 +100,9 @@ namespace THUtils.THShader
 			pipelineState.Generate(context);
 
 			context.WriteLine("HLSLPROGRAM");
+
+			OnBeginWritingPassCode(context);
+			
 			context.WriteLine("#pragma vertex vert");
 			context.WriteLine("#pragma fragment frag");
 			context.WriteLine($"#define {GetType().Name}");
@@ -115,6 +118,10 @@ namespace THUtils.THShader
 			context.KeywordMap.GetKeyword<KeywordFragmentShader>().Write(context);
 
 			context.WriteLine("ENDHLSL");
+		}
+
+		protected virtual void OnBeginWritingPassCode(ShaderGenerationContext context)
+		{
 		}
 
 		private KeywordShadowDepthPass.ShadowDepthPassMode GetShadowDepthMode(ShaderGenerationContext context)
