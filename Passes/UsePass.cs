@@ -37,7 +37,7 @@ namespace THUtils.THShader.Passes
 
 		#endregion
 
-		internal override void WritePass(ShaderGenerationContext context, ShaderModel config)
+		internal override void WritePass(ShaderGenerationContext context, ShaderModel config, SourceMap.ShaderPassSource passSpecificCode)
 		{
 			context.WriteLine($"UsePass \"{_passName}\"");
 		}

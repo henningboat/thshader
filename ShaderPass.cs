@@ -141,14 +141,14 @@ namespace THUtils.THShader
 
 		#region Protected methods
 
-		internal virtual void WritePass(ShaderGenerationContext context, ShaderModel config)
+		internal virtual void WritePass(ShaderGenerationContext context, ShaderModel config, SourceMap.ShaderPassSource passSpecificCode)
 		{
 			var mode = GetShadowDepthMode(context);
 			if (UsePassName != null)
 			{
 				if (mode == KeywordShadowDepthPass.ShadowDepthPassMode.DefaultPass)
 				{
-					new UsePass(UsePassName).WritePass(context, config);
+					new UsePass(UsePassName).WritePass(context, config, null);
 					return;
 				}
 
@@ -158,11 +158,13 @@ namespace THUtils.THShader
 				}
 			}
 
+			
+			
 			context.LogShaderSection($"Shader Pass {GetType().Name}");
 
 			context.WriteLine("Pass{");
 
-			var shaderPassContext = context.CreatePassContext(context, this, config);
+			var shaderPassContext = context.CreatePassContext(context, this, config, passSpecificCode);
 			shaderPassContext.WriteIndented(WriteInnerPass);
 
 			context.WriteLine("}");

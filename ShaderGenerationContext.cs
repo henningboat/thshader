@@ -19,18 +19,21 @@ namespace THUtils.THShader
 
 		private readonly StringBuilder _stringBuilder;
 		private int _indentCount;
-		private IReadOnlyList<string> _keymapSource;
-		private string _currentSection;
+		public readonly SourceMap SourceMap;
 
 		#endregion
 
 		#region Constructors
 
-		public ShaderGenerationContext(IReadOnlyList<string> source, StringBuilder stringBuilder)
+		public ShaderGenerationContext(SourceMap sourceMap, StringBuilder stringBuilder, SourceMap.ShaderPassSource shaderPassSource = null)
 		{
+			SourceMap = sourceMap;
 			_stringBuilder = stringBuilder;
-			_keymapSource = source;
-			KeywordMap = new KeywordMap(new Queue<string>(source));
+			KeywordMap = new KeywordMap(new Queue<string>(sourceMap.DefaultPassSource));
+			if (shaderPassSource != null)
+			{
+				KeywordMap.AddPassCode(shaderPassSource);
+			}
 		}
 
 		#endregion
@@ -49,7 +52,6 @@ namespace THUtils.THShader
 
 		public void LogShaderSection(string sectionName)
 		{
-			_currentSection = sectionName;
 			_stringBuilder.Append($"{Environment.NewLine}{Environment.NewLine}//");
 
 			float spaceCount = _indentCount * 4 - 2;
@@ -107,9 +109,9 @@ namespace THUtils.THShader
 			Unindent();
 		}
 
-		public ShaderGenerationContext CreatePassContext(ShaderGenerationContext parent, ShaderPass pass, ShaderModel config)
+		public ShaderGenerationContext CreatePassContext(ShaderGenerationContext parent, ShaderPass pass, ShaderModel config, SourceMap.ShaderPassSource passSourceSource)
 		{
-			return new ShaderGenerationContext(parent._keymapSource, parent._stringBuilder)
+			return new ShaderGenerationContext(parent.SourceMap, parent._stringBuilder,passSourceSource)
 			       {
 				       _indentCount = parent._indentCount,
 				       CurrentPass = pass,

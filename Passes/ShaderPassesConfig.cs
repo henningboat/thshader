@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using THUtils.THShader.Keywords;
+using UnityEngine;
 
 namespace THUtils.THShader.Passes
 {
@@ -23,7 +24,7 @@ namespace THUtils.THShader.Passes
 
 		#region Public methods
 
-		public abstract List<ShaderPass> GeneratePasses(ShaderGenerationContext context);
+		public abstract void GeneratePasses(ShaderGenerationContext context, out ShaderPass mainPass, out List<ShaderPass> additionalPasses);
 
 		public void Write(ShaderGenerationContext context)
 		{
@@ -32,7 +33,7 @@ namespace THUtils.THShader.Passes
 			context.KeywordMap.GetKeyword<KeywordHasNormalMap>().Write(context);
 
 			context.WriteLine("HLSLINCLUDE");
-			
+
 			context.WriteLine("#include \"Packages/com.henningboat.thshader/ShaderLibrary/Common.cginc\"");
 
 			foreach (ShaderModelTexture modelTexture in OptionalShaderModelTextures)
@@ -47,9 +48,23 @@ namespace THUtils.THShader.Passes
 
 			context.WriteLine("ENDHLSL");
 
-			foreach (ShaderPass pass in GeneratePasses(context))
+			GeneratePasses(context, out ShaderPass mainPass, out List<ShaderPass> additionalPasses);
+
+			if (context.SourceMap.CustomPasses.Count > 0)
 			{
-				context.WriteIndented(buildContext => pass.WritePass(buildContext, this));
+				foreach (SourceMap.ShaderPassSource customPass in context.SourceMap.CustomPasses)
+				{
+					context.WriteIndented(buildContext => mainPass.WritePass(buildContext, this, customPass));
+				}
+			}
+			else
+			{
+				context.WriteIndented(buildContext => mainPass.WritePass(buildContext, this, null));
+			}
+
+			foreach (ShaderPass pass in additionalPasses)
+			{
+				context.WriteIndented(buildContext => pass.WritePass(buildContext, this, null));
 			}
 		}
 

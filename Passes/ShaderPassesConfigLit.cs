@@ -20,15 +20,15 @@ namespace THUtils.THShader.Passes
 
 		#region Public methods
 
-		public override List<ShaderPass> GeneratePasses(ShaderGenerationContext context)
+		public override void GeneratePasses(ShaderGenerationContext context, out ShaderPass mainPass, out List<ShaderPass> additionalPasses)
 		{
-			return new List<ShaderPass>()
-			       {
-				       new ShaderPassLitForward(),
-				       new ShaderPassShadow(),
-				       new ShaderPassDepthOnly(),
-				       new ShaderPassLitMeta(),
-			       };
+			mainPass = new ShaderPassLitForward();
+			additionalPasses = new List<ShaderPass>()
+			                   {
+				                   new ShaderPassShadow(),
+				                   new ShaderPassDepthOnly(),
+				                   new ShaderPassLitMeta(),
+			                   };
 		}
 
 		#endregion

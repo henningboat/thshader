@@ -23,7 +23,7 @@ namespace THUtils.THShader
 
 			while (sourceLines.Count > 0)
 			{
-				ParseKeyword(sourceLines, keywordTypes);
+				ParseKeyword(sourceLines, keywordTypes, false);
 			}
 
 			foreach (Type type in keywordTypes)
@@ -68,11 +68,23 @@ namespace THUtils.THShader
 			return results;
 		}
 
+		public void AddPassCode(SourceMap.ShaderPassSource shaderPassSource)
+		{
+			var keywordTypes = TypeCache.GetTypesDerivedFrom<Keyword>().Select(type => type).Where(type => !type.IsAbstract).ToList();
+
+			var sourceLines = new Queue<string>(shaderPassSource.Lines);
+
+			while (sourceLines.Count > 0)
+			{
+				ParseKeyword(sourceLines, keywordTypes, true);
+			}
+		}
+
 		#endregion
 
 		#region Private methods
 
-		private void ParseKeyword(Queue<string> sourceLines, List<Type> keywordTypes)
+		private void ParseKeyword(Queue<string> sourceLines, List<Type> keywordTypes, bool allowOverwrite)
 		{
 			string[] lineComponents = ShaderGenerator.SplitLine(sourceLines.Peek());
 			if (lineComponents.Length == 0 || lineComponents[0] == "")
@@ -91,6 +103,11 @@ namespace THUtils.THShader
 
 					if (typeof(SingletonKeyword).IsAssignableFrom(type))
 					{
+						if (_singletonKeywords.ContainsKey(type) && !allowOverwrite)
+						{
+							throw new ShaderGenerationException("Duplicated keyword of type " + type);
+						}
+
 						_singletonKeywords[type] = keyword as SingletonKeyword;
 					}
 					else

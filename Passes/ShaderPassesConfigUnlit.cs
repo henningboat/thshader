@@ -11,14 +11,13 @@ namespace THUtils.THShader.Passes
 
 		#region Public methods
 
-		public override List<ShaderPass> GeneratePasses(ShaderGenerationContext context)
-		{
-			return new List<ShaderPass>
-			       {
-				       new ShaderUnlitPass()
-			       };
-		}
 
 		#endregion
+
+		public override void GeneratePasses(ShaderGenerationContext context, out ShaderPass mainPass, out List<ShaderPass> additionalPasses)
+		{
+			mainPass = new ShaderUnlitPass();
+			additionalPasses = new List<ShaderPass>();
+		}
 	}
 }

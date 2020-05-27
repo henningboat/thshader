@@ -70,12 +70,14 @@ Shader ""Hidden/THShaderErrorShader2""
 
 		internal ShaderGenerator(List<string> source)
 		{
-			ShaderGenerationContext context=null;
+			TrimSource(source);
+			ShaderGenerationContext context = null;
 			try
 			{
 				RemoveComments(source);
+				SourceMap sourceMap = new SourceMap(source);
 
-				context = new ShaderGenerationContext(source, new StringBuilder());
+				context = new ShaderGenerationContext(sourceMap, new StringBuilder());
 
 				GenerateOuter(context, (s) =>
 				                       {
@@ -93,6 +95,7 @@ Shader ""Hidden/THShaderErrorShader2""
 				{
 					GeneratedShader += context.BuildString();
 				}
+
 				GeneratedShader += "\n #error";
 				GeneratedShader += e;
 				Debug.LogWarning("Failed to import thshader");
@@ -102,6 +105,14 @@ Shader ""Hidden/THShaderErrorShader2""
 		#endregion
 
 		#region Private methods
+
+		private void TrimSource(List<string> source)
+		{
+			for (int i = 0; i < source.Count; i++)
+			{
+				source[i] = source[i].Trim();
+			}
+		}
 
 		private void RemoveComments(List<string> source)
 		{
@@ -127,6 +138,107 @@ Shader ""Hidden/THShaderErrorShader2""
 			context.WriteLine($"Shader \"{context.KeywordMap.GetKeyword<KeywordName>().ShaderName}\" {{");
 			context.WriteIndented(action);
 			context.WriteLine($"}}");
+		}
+
+		#endregion
+	}
+
+	public class SourceMap
+	{
+		#region Private Fields
+
+		private List<ShaderPassSource> _customPasses;
+		private List<string> _defaultPassSource;
+
+		#endregion
+
+		#region Properties
+
+		public List<string> DefaultPassSource => _defaultPassSource;
+		public IReadOnlyCollection<ShaderPassSource> CustomPasses => _customPasses;
+
+		#endregion
+
+		#region Constructors
+
+		public SourceMap(List<string> source)
+		{
+			_defaultPassSource = new List<string>();
+			_customPasses = new List<ShaderPassSource>();
+			
+			Queue<string> sourceCodeQueue = new Queue<string>(source);
+			while (sourceCodeQueue.Count > 0)
+			{
+				string line = sourceCodeQueue.Dequeue();
+				if (line.StartsWith("CustomPass "))
+				{
+					string shaderPassName = line.Replace("ShaderPass ", "");
+					ShaderPassSource shaderPassSource = new ShaderPassSource(shaderPassName);
+
+					while (true)
+					{
+						string nextLine = sourceCodeQueue.Dequeue();
+						if (nextLine != "EndPass")
+						{
+							shaderPassSource.AddLine(nextLine);
+						}
+						else
+						{
+							break;
+						}
+					}
+
+					_customPasses.Add(shaderPassSource);
+				}
+				else
+				{
+					_defaultPassSource.Add(line);
+				}
+			}
+		}
+
+		#endregion
+
+		#region Nested type: ShaderPass
+
+		public class ShaderPassSource
+		{
+			#region Public Fields
+
+			public readonly string Name;
+
+			#endregion
+
+			#region Private Fields
+
+			List<string> _lines;
+
+			#endregion
+
+			#region Properties
+
+			public IReadOnlyCollection<string> Lines => _lines;
+
+			#endregion
+
+			#region Constructors
+
+			public ShaderPassSource(string name)
+			{
+				Name = name;
+				_lines = new List<string>();
+			}
+
+			#endregion
+
+			#region Public methods
+
+			public void AddLine(string line)
+			{
+				_lines.Add(line);
+			}
+
+			#endregion
 		}
 
 		#endregion
