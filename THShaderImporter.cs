@@ -13,8 +13,12 @@ namespace THUtils.THShader
 
 		public override void OnImportAsset(AssetImportContext ctx)
 		{
+			//to prevent automatic changes on build server
+			if (Application.isBatchMode)
+				return;
+
 			string sourceFilePath = Path.Combine(Application.dataPath + "\\..\\", ctx.assetPath);
-            var data = File.ReadAllLines(sourceFilePath).ToList();
+			var data = File.ReadAllLines(sourceFilePath).ToList();
 
 			var generator = new ShaderGenerator(data);
 
@@ -24,6 +28,7 @@ namespace THUtils.THShader
 			File.WriteAllText(path, generator.GeneratedShader);
 
 			AssetDatabase.ImportAsset(assetPath.Replace(".thshader", ".shader"));
+
 
 			//var shader = ShaderUtil.CreateShaderAsset(generator.GeneratedShader, false);
 			//ctx.AddObjectToAsset("MainAsset", shader);
