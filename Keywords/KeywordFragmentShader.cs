@@ -19,7 +19,7 @@ namespace THUtils.THShader.Keywords
 			context.LogShaderSection("Fragment Shader");
 
 			//todo it migh be more performant to only output a float3 for opaque shaders
-			context.WriteLine("float4 frag(Varyings input) : COLOR{");
+			context.WriteLine($"{context.CurrentPass.FragmentReturnFormat} frag(Varyings input) : COLOR{{");
 
 			context.WriteIndented(WriteFragmentShaderHeader);
 

@@ -46,6 +46,8 @@ namespace THUtils.THShader
 
 		#region Properties
 
+		public virtual string CustomStencilDefinition => null;
+		public virtual string FragmentReturnFormat => $"half4";
 		protected virtual string FragmentShaderFooterPath => $"{LibraryBaseName}FragmentFooter.cginc";
 		protected virtual string FragmentShaderHeaderPath => $"{LibraryBaseName}FragmentHeader.cginc";
 		public abstract bool IsMainPass { get; }
@@ -86,6 +88,14 @@ namespace THUtils.THShader
 
 		#endregion
 
+		#region Protected methods
+
+		protected virtual void OnBeginWritingPassCode(ShaderGenerationContext context)
+		{
+		}
+
+		#endregion
+
 		#region Private methods
 
 		private string GetShaderHeader()
@@ -102,7 +112,7 @@ namespace THUtils.THShader
 			context.WriteLine("HLSLPROGRAM");
 
 			OnBeginWritingPassCode(context);
-			
+
 			context.WriteLine("#pragma vertex vert");
 			context.WriteLine("#pragma fragment frag");
 			context.WriteLine($"#define {GetType().Name}");
@@ -118,10 +128,6 @@ namespace THUtils.THShader
 			context.KeywordMap.GetKeyword<KeywordFragmentShader>().Write(context);
 
 			context.WriteLine("ENDHLSL");
-		}
-
-		protected virtual void OnBeginWritingPassCode(ShaderGenerationContext context)
-		{
 		}
 
 		private KeywordShadowDepthPass.ShadowDepthPassMode GetShadowDepthMode(ShaderGenerationContext context)
@@ -158,8 +164,6 @@ namespace THUtils.THShader
 				}
 			}
 
-			
-			
 			context.LogShaderSection($"Shader Pass {GetType().Name}");
 
 			context.WriteLine("Pass{");

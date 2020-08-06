@@ -25,6 +25,11 @@ namespace THUtils.THShader
 			{
 				keyword.Write(context);
 			}
+
+			if (context.CurrentPass.CustomStencilDefinition != null)
+			{
+				context.WriteLine(context.CurrentPass.CustomStencilDefinition);
+			}
 		}
 
 		#endregion
